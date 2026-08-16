@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孤鸿组 - 暑期专题讲解（三）九年级物理：比热容</title>
+    <style>
+        /* ============================================
+           1. 严格字体导入
+           ============================================ */
+        @font-face { font-family: 'MengyuanSong'; src: url('../../fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('../../fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('../../fonts/方正书宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'GB Pinyinok'; src: url('../../fonts/GB Pinyinok-B.ttf'); font-display: swap; }
+
+        /* XITS 常规体 */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS.otf'); font-weight: normal; font-style: normal; font-display: swap; }
+        /* XITS 斜体 (用于英文字母与Δ) */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS-Italic.otf'); font-weight: normal; font-style: italic; font-display: swap; }
+        /* XITS 粗体 (XITS-Bold) */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS-Bold.otf'); font-weight: bold; font-style: normal; font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* 全局重置：默认使用方正书宋简体，不加粗、不斜体 */
+        body {
+            font-family: 'FZShuSong', serif;
+            font-weight: 400;
+            font-style: normal;
+            background-color: #f4f7f9; background-image: url('../../bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #111; overflow-x: hidden;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; font-weight: 400; }
+
+        main { padding: 104px 20px 40px; max-width: 900px; margin: 0 auto; }
+
+        /* ============================================
+           ⚡ 力学弹力动画卡片
+           ============================================ */
+        .video-player-card,
+        .text-card {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        .video-player-card:active,
+        .text-card:active { transform: scale(0.96); }
+
+        /* ============================================
+           视频播放容器
+           ============================================ */
+        .video-player-card {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+        .video-wrapper {
+            width: 100%; position: relative; padding-bottom: 56.25%; /* 16:9 比例 */
+            height: 0; overflow: hidden; border-radius: 12px; background: #000;
+        }
+        .video-wrapper video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 0; outline: none;
+            object-fit: cover;
+        }
+
+        /* ============================================
+           文稿卡片样式
+           ============================================ */
+        .text-card {
+            background: rgba(255, 255, 255, 0.6); border-radius: 24px;
+            padding: 40px; border: 1px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px); font-size: 18px; line-height: 2;
+        }
+
+        /* 大标题 (梦源宋体) */
+        .text-card h1 { font-family: 'MengyuanSong', serif; font-size: 36px; text-align: center; margin-bottom: 30px; color: #16375D; font-weight: 400; font-style: normal; line-height: 1.4; }
+        
+        /* 小标题 (方正黑体) */
+        .text-card h2 { font-family: 'FZHei', sans-serif; font-size: 26px; margin-top: 40px; margin-bottom: 15px; color: #16375D; font-weight: 400; font-style: normal; }
+
+        /* 标准正文（汉字与数字 - 方正书宋简体） */
+        .txt { font-family: 'FZShuSong', serif !important; font-weight: 400 !important; font-style: normal !important; }
+
+        /* 拼音专用字体 (仅用于拼音字母，括号和汉字不会受影响) */
+        .pinyin { font-family: 'GB Pinyinok', sans-serif !important; font-weight: 400 !important; font-style: normal !important; }
+
+        /* XITS 字体应用 */
+        .xits-normal { font-family: 'XITS', serif; font-weight: 400; font-style: normal; }
+        .xits-italic { font-family: 'XITS', serif; font-weight: 400; font-style: italic; }
+        .xits-bold { font-family: 'XITS', serif; font-weight: bold; font-style: normal; }
+
+        /* 文案原图容器 */
+        .wenan-img-wrapper { width: 100%; max-width: 600px; margin: 30px auto; text-align: center; }
+        .wenan-img-wrapper img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        /* 专用颜色与辅助 */
+        .highlight-blue { color: #1E88E5; }
+        .highlight-red { color: #D32F2F; }
+
+        /* 音频触发区样式 (黑色、无下划线、鼠标手型) */
+        .audio-trigger {
+            color: #000 !important;
+            text-decoration: none !important;
+            cursor: pointer;
+            display: inline;
+        }
+        .audio-trigger:hover { background: rgba(0,0,0,0.03); }
+
+        @media (max-width: 600px) {
+            header { padding: 15px 20px; }
+            .text-card { padding: 20px; }
+            .text-card h1 { font-size: 28px; }
+            .text-card h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="../../logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">暑期专题讲解（三）</div>
+    </header>
+
+    <main>
+        <!-- 1. 视频卡片容器 -->
+        <div class="video-player-card">
+            <div class="video-wrapper">
+                <video src="3.mp4" poster="3.png" controls playsinline></video>
+            </div>
+        </div>
+
+        <!-- 2. 讲义文稿容器 -->
+        <div class="text-card">
+
+            <!-- 大标题 (梦源宋体) -->
+            <h1>暑期专题讲解（三）<br>九年级物理：比热容</h1>
+
+            <!-- 前言（小标题 方正黑体） -->
+            <h2>前言</h2>
+            <p class="txt">
+                想必各位最近在网上刷到了一个文案，文案内容是：<br>
+                物理老师：“解释一下什么是热比容”<br>
+                我：“<span class="audio-trigger" onclick="playAudio('3a.mp3')">怎么先炽(<span class="pinyin">chì</span>)热的却先变冷了</span>，<span class="audio-trigger" onclick="playAudio('3b.mp3')">慢热的却停不了还在沸腾着</span>”
+            </p>
+
+            <!-- 图三：文案原图 -->
+            <div class="wenan-img-wrapper">
+                <img src="wenan.jpg" alt="文案原图" />
+            </div>
+
+            <p class="txt" style="margin-top: 20px;">
+                *让我们从物理学角度评析该说法是否正确。
+            </p>
+
+            <h2>先谈结论：</h2>
+            <p class="txt">
+                核心物理规律正确，“还在沸腾着”属于文学艺术夸张，不完全符合现实实验现象。
+            </p>
+
+            <h2>原理依据：</h2>
+            <p class="txt">
+                *原理依据：公式 <span class="xits-italic">Q</span><span class="xits-normal">=</span><span class="xits-italic">cm</span><span class="xits-normal">Δ</span><span class="xits-italic">t</span><br>
+                其中，<span class="xits-italic">Q</span> 为吸收/放出的热量，<span class="xits-italic">c</span> 为比热容，<span class="xits-italic">m</span> 为质量，<span class="xits-normal">Δ</span><span class="xits-italic">t</span> 为温度变化量。
+            </p>
+
+            <!-- 蓝色序号 (XITS-Bold) 和 变量 (XITS-Italic) -->
+            <p class="txt" style="margin-top: 20px;">
+                <span class="xits-bold highlight-blue">1.</span> 比热容 <span class="xits-italic">c</span> 越小，温度变化 <span class="xits-normal">Δ</span><span class="xits-italic">t</span> 越大。<br>
+                <span class="xits-bold highlight-blue">2.</span> 比热容 <span class="xits-italic">c</span> 越大，温度变化 <span class="xits-normal">Δ</span><span class="xits-italic">t</span> 越小。
+            </p>
+
+            <h2>逐句分析：</h2>
+            <p class="txt">
+                <!-- ✅ 修复：在外层包裹，括号和拼音均在点击效果内，且括号不用拼音字体 -->
+                <span class="xits-bold highlight-blue">1.</span> “<span class="audio-trigger" onclick="playAudio('3a.mp3')">怎么先炽(<span class="pinyin">chì</span>)热的却先变冷了</span>” <span class="xits-bold">✅</span> 物理正确<br>
+                对应比热容小的物质。<br>
+                吸热的时候温度上升很快，很容易变得炽热；不再加热向外放热时，温度下降也很快，会最先冷却。<br>
+                实例：沙子、铁锅。太阳一晒沙子马上滚烫，太阳落下沙子迅速降温。<br><br>
+                
+                <!-- ✅ 第二句整句触发 -->
+                <span class="xits-bold highlight-blue">2.</span> “<span class="audio-trigger" onclick="playAudio('3b.mp3')">慢热的却停不了还在沸腾着</span>”<br>
+                - “慢热” <span class="xits-bold">✅</span> 物理正确：对应比热容大的物质（如水）。升高相同温度，需要吸收更多热量，升温过程缓慢。停止加热向外放热时，温度下降十分缓慢，可以长时间保持高温。<br><br>
+                - “还在沸腾着” <span class="xits-bold highlight-red">❌</span> 不符合物理事实。<br>
+                沸腾的条件：①达到沸点；②持续吸热。撤去热源之后，水无法继续吸收热量，沸腾会立刻停止，不会持续沸腾。歌词这里是文学修辞，把“长时间保持高温”夸张写成“还在沸腾”。
+            </p>
+
+            <h2>总结</h2>
+            <p class="txt">
+                这句话抓住了比热容的核心特点：比热容小，升温快、降温也快；比热容大，升温慢、降温也慢。<br>
+                除去文学夸张的“沸腾”二字，用来比喻比热容是合理的。
+            </p>
+
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 30px; font-family: 'FZShuSong', serif; font-size: 14px; color: #000; backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border-radius: 24px; margin-top: 40px;">
+        <p>DeepSeek提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+
+    <script>
+        // 后台静默播放音频函数（不跳转页面）
+        function playAudio(src) {
+            let audio = new Audio(src);
+            audio.play().catch(e => {
+                console.log("音频播放失败或不允许自动播放:", e);
+            });
+        }
+    </script>
+</body>
+</html>
