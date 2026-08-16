@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>孤鸿组 - 关于我们</title>
+    <title>孤鸿组 - 主页</title>
     <style>
-        /* 字体配置保持不变 */
-        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttf'); font-display: swap; }
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); font-display: swap; }
         @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
         @font-face { font-family: 'FZFangSong'; src: url('fonts/方正仿宋简体.ttf'); font-display: swap; }
         @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'XITS'; src: url('fonts/XITS.otf'); font-display: swap; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -18,8 +18,6 @@
             background-repeat: no-repeat; background-position: center center;
             background-size: cover; background-attachment: fixed; color: #000000; overflow-x: hidden;
         }
-
-        /* 头部样式 */
         header {
             position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
@@ -28,98 +26,277 @@
             border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
         }
-        .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
         .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
         .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
 
-        /* 核心卡片样式 */
         .glass-card {
             background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px; padding: 25px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);    
             transition: transform 0.22s ease, background 0.3s;
             text-decoration: none; color: inherit; display: block;
-            isolation: isolate; position: relative; overflow: hidden;
+            isolation: isolate;
         }
         a.glass-card:hover { background: rgba(255, 255, 255, 0.35); transform: translateY(-5px); }
         a.glass-card:active { transform: scale(0.96); }
-        
         .card-title { font-family: 'FZHei', sans-serif; font-size: 20px; margin-bottom: 10px; color: #16375D; display: flex; align-items: center; gap: 10px;}
-        .card-content { font-family: 'FZShuSong', serif; font-size: 16px; color: #000; line-height: 1.6; }
+        .card-content { font-family: 'FZShuSong', serif; font-size: 16px; color: #000; }
 
-        /* Beta 标识样式 */
-        .beta-badge {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(22, 55, 93, 0.1); color: #16375D;
-            font-family: 'FZHei', sans-serif; font-size: 12px; font-weight: bold;
-            padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(22, 55, 93, 0.2);
-            pointer-events: none; letter-spacing: 1px;
+        /* 倒计时卡片 */
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);
+            padding: 40px;
+            text-align: center;
+            font-family: 'FZHei', sans-serif;
+            font-size: 32px;
+            color: #16375D;
+            user-select: none;
+            transition: transform 0.22s ease, background 0.3s, opacity 0.4s ease;
+            cursor: pointer;
+            isolation: isolate;
         }
+        .countdown-box:active { transform: scale(0.96); }
+        .fade-out { opacity: 0; }
 
-        /* 底部样式 */
         footer {
             text-align: center; padding: 30px; margin-top: 40px;
             font-family: 'FZShuSong', serif; font-size: 14px; color: #000;
             backdrop-filter: blur(10px); background: rgba(255,255,255,0.2);
         }
-        footer a { color: #16375D; text-decoration: none !important; margin: 0 5px; }
         
-        /* 图标通用样式 */
+        footer a { 
+            color: #16375D; 
+            text-decoration: none !important; 
+            margin: 0 5px; 
+        }
+        footer a:visited, 
+        footer a:hover, 
+        footer a:active, 
+        footer a:focus { 
+            text-decoration: none !important; 
+        }
+
         .icon-svg { width: 24px; height: 24px; fill: none; stroke: #16375D; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     </style>
 </head>
 <body>
     <header>
-        <a href="index.html" class="logo-area">
+        <div class="logo-area">
             <img src="logo.png" alt="组徽" onerror="this.style.display='none'">
             <span class="logo-text">孤鸿组</span>
-        </a>
-        <div class="page-title">关于我们</div>
+        </div>
+        <div class="page-title">主页</div>
     </header>
 
     <main style="padding: 104px 20px 40px; max-width: 900px; margin: 0 auto;">
-        <!-- 介绍卡片区域 -->
-        <div class="glass-card" style="margin-bottom: 22px;">
-            <span class="beta-badge">BETA 测试版</span>
-            <div class="card-title">
-                <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                平台简介
-            </div>
-            <div class="card-content">
-                <p style="margin-bottom: 15px;">欢迎来到孤鸿组数字化服务平台。这里是我们班级日常学习、活动组织与信息同步的核心枢纽。</p>
-                <p style="margin-bottom: 15px;">本平台旨在通过简洁、高效的方式，整合课程表、作业清单、校园活动及小组作品展示等功能，为每一位组员提供便捷的信息获取体验。</p>
-                <p><strong>当前状态：</strong>网站正处于<span style="color:#16375D; font-weight:bold;">内部测试阶段 (Beta)</span>。部分功能可能仍在迭代优化中，数据可能存在延迟或变动。如果您在浏览过程中发现任何显示异常或功能问题，欢迎随时向技术组反馈，您的建议将帮助我们更好地完善这个属于我们自己的空间。</p>
-            </div>
+        <div class="countdown-box" id="countdown">
+            <div id="countInner">正在计算时间...</div>
         </div>
-
-        <!-- 快速导航网格 -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:22px; justify-items: stretch;">
-            <a href="index.html" class="glass-card">
-                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>返回首页</div>
-                <div class="card-content">进入主页查看实时动态与快捷入口</div>
-            </a>
+        
+        <div style="padding-top:26px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:22px; justify-items: stretch;">
             <a href="notice.html" class="glass-card">
-                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>通知中心</div>
-                <div class="card-content">查阅班级公告、考试安排与重要提醒</div>
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>通知</div>
+                <div class="card-content">班级公告与重要提醒</div>
+            </a>
+            <a href="homework.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>作业</div>
+                <div class="card-content">今日作业清单与提交状态</div>
+            </a>
+            <a href="activities.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>活动</div>
+                <div class="card-content">近期班级与校园活动安排</div>
+            </a>
+            <a href="schedule.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>课程表</div>
+                <div class="card-content">查看本周课程安排与实时状态</div>
+            </a>
+            <a href="timetable.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>时间表</div>
+                <div class="card-content">全天作息与教师坐班一览</div>
+            </a>
+            <a href="calendar.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path></svg>校历</div>
+                <div class="card-content">本学期重要考试与活动</div>
             </a>
             <a href="works.html" class="glass-card">
-                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>作品展示</div>
-                <div class="card-content">浏览孤鸿组优秀项目与创作成果</div>
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>小组作品</div>
+                <div class="card-content">孤鸿组优秀项目与创作展示</div>
+            </a>
+            <a href="schoolsongs.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>校歌</div>
+                <div class="card-content">聆听我们的校歌</div>
+            </a>
+            <a href="groupsongs.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>组歌</div>
+                <div class="card-content">孤鸿组专属组歌歌词</div>
             </a>
             <a href="teachers.html" class="glass-card">
-                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>师资团队</div>
-                <div class="card-content">了解我们的引路人与联系方式</div>
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>我们的引路人</div>
+                <div class="card-content">老师联系方式与职位</div>
             </a>
         </div>
     </main>
 
     <footer>
-        <p>友情链接：
-            <a href="chindex.html" onclick="window.top.location.href=this.href; return false;">学校官网</a> | 
-            <span onclick="window.top.location.href='yxgovedu.html';" style="cursor:pointer;color:#16375D;margin:0 5px">教育局官网</span>
-        </p>
-        <p>千问提供技术支持 &copy; 2026 孤鸿组 · 测试版</p>
-    </footer>
+    <p>友情链接：
+        <!-- 保持学校官网不变 -->
+        <a href="chindex.html" onclick="window.top.location.href=this.href; return false;">学校官网</a> | 
+        <!-- 教育局链接：加入弹窗测试，看看到底是事件没触发，还是跳转被拦截 -->
+        <span onclick="window.top.location.href='yxgovedu.html';" style="cursor:pointer;color:#16375D;margin:0 5px">教育局官网</span>
+    </p>
+    <p>千问提供技术支持 &copy; 2026 孤鸿组</p>
+</footer>
+
+    <script>
+        const zhongkaoStart = new Date('2027-06-18T09:00:00+08:00');
+        const lastExamEnd = new Date('2027-06-20T10:40:00+08:00');
+        const examSchedule = {
+            '2027-06-18': [{ name: '语文', start: '09:00', end: '11:00' }, { name: '物理、化学', start: '15:00', end: '17:00' }],
+            '2027-06-19': [{ name: '数学', start: '09:00', end: '11:00' }, { name: '历史、道德与法治', start: '15:00', end: '17:00' }],
+            '2027-06-20': [{ name: '英语', start: '09:00', end: '10:40' }]
+        };
+
+        const countdownEl = document.getElementById('countdown');
+        const countInner = document.getElementById('countInner');
+        let clickMode = 0;
+        let lastText = ""; 
+        let lastStateType = ""; 
+
+        function updateCountdown() {
+            if (!countInner) return;
+            const now = new Date();
+            let newText = "";
+            let currentStateType = ""; 
+            const nowStr = now.toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' });
+
+            if (now >= lastExamEnd) {
+                newText = "中考已圆满结束！";
+                currentStateType = "finished";
+            } 
+            else if (nowStr === '2027-06-18' || nowStr === '2027-06-19' || nowStr === '2027-06-20') {
+                const currentTimeStr = now.toTimeString().slice(0, 5);
+                const todayExams = examSchedule[nowStr] || [];
+                let currentExam = todayExams.find(e => currentTimeStr >= e.start && currentTimeStr < e.end);
+
+                if (currentExam) {
+                    currentStateType = "in_exam";
+                    const endTime = new Date(`${nowStr}T${currentExam.end}:00+08:00`);
+                    const startTime = new Date(`${nowStr}T${currentExam.start}:00+08:00`);
+                    
+                    if (clickMode === 1) {
+                        const elapsedMs = now - startTime;
+                        const eh = Math.floor(elapsedMs / 3600000);
+                        const em = Math.floor((elapsedMs % 3600000) / 60000);
+                        const es = Math.floor((elapsedMs % 60000) / 1000);
+                        newText = `【${currentExam.name}】开考已过去 ${eh}时${em}分${es}秒`;
+                    } else {
+                        const remainMs = endTime - now;
+                        const h = Math.floor(remainMs / 3600000);
+                        const m = Math.floor((remainMs % 3600000) / 60000);
+                        const s = Math.floor((remainMs % 60000) / 1000);
+                        newText = `距离【${currentExam.name}】结束还有 ${h}时${m}分${s}秒`;
+                    }
+                } else {
+                    currentStateType = "waiting_exam";
+                    const nextExam = todayExams.find(e => currentTimeStr < e.start);
+                    if (nextExam) {
+                        const startTime = new Date(`${nowStr}T${nextExam.start}:00+08:00`);
+                        const remainMs = startTime - now;
+                        const h = Math.floor(remainMs / 3600000);
+                        const m = Math.floor((remainMs % 3600000) / 60000);
+                        const s = Math.floor((remainMs % 60000) / 1000);
+                        newText = `距离【${nextExam.name}】开考还有 ${h}时${m}分${s}秒`;
+                    } else {
+                        newText = "今日考试已全部结束！";
+                        currentStateType = "day_finished";
+                    }
+                }
+            } 
+            else {
+                currentStateType = "normal";
+                
+                const todayZero = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const targetZero = new Date(zhongkaoStart.getFullYear(), zhongkaoStart.getMonth(), zhongkaoStart.getDate());
+                const diffDays = targetZero - todayZero;
+                const days = Math.floor(diffDays / 86400000);
+                
+                const diffExact = zhongkaoStart - now;
+                const totalHours = Math.floor(diffExact / 3600000);
+                const remainMins = Math.floor((diffExact % 3600000) / 60000);
+                const remainSecs = Math.floor((diffExact % 60000) / 1000);
+
+                let months = 0;
+                let tempDate = new Date(todayZero);
+                while (true) {
+                    tempDate.setMonth(tempDate.getMonth() + 1);
+                    if (tempDate <= targetZero) months++;
+                    else break;
+                }
+                let remDate = new Date(todayZero);
+                remDate.setMonth(remDate.getMonth() + months);
+                const remDaysAfterMonths = Math.ceil((targetZero - remDate) / 86400000);
+                
+                const weeks = Math.floor(days / 7);
+                const wRemDays = days % 7;
+
+                const modes = [`距离中考还有 ${days} 天`];
+                if (months > 0) modes.push(`距离中考还有 ${months} 个月 ${remDaysAfterMonths} 天`);
+                if (weeks > 0) modes.push(`距离中考还有 ${weeks} 周 ${wRemDays} 天`);
+                modes.push(`距离中考还有 ${totalHours} 时 ${remainMins} 分 ${remainSecs} 秒`);
+
+                if (clickMode >= modes.length) clickMode = 0;
+                newText = modes[clickMode];
+            }
+
+            const needTransition = (currentStateType !== lastStateType) && lastStateType !== "";
+            
+            if (newText !== lastText) {
+                if (needTransition) {
+                    countdownEl.classList.add('fade-out');
+                    setTimeout(() => {
+                        countInner.innerText = newText;
+                        countdownEl.classList.remove('fade-out');
+                        lastText = newText;
+                        lastStateType = currentStateType;
+                    }, 400);
+                } else {
+                    countInner.innerText = newText;
+                    lastText = newText;
+                    lastStateType = currentStateType;
+                }
+            }
+        }
+
+        function loop() {
+            updateCountdown();
+            requestAnimationFrame(loop);
+        }
+        loop();
+
+        function toggleCountdown() {
+            const now = new Date();
+            const nowStr = now.toLocaleDateString('sv-SE', { timeZone: 'Asia/Shanghai' });
+            const currentTimeStr = now.toTimeString().slice(0, 5);
+            const todayExams = examSchedule[nowStr] || [];
+            const isInExam = todayExams.some(e => currentTimeStr >= e.start && currentTimeStr < e.end);
+            const isBeforeExam = now < zhongkaoStart;
+
+            if (isBeforeExam) {
+                clickMode++; 
+                updateCountdown();
+            } else if (isInExam) {
+                clickMode = (clickMode + 1) % 2; 
+                updateCountdown();
+            }
+        }
+        countdownEl.addEventListener('click', toggleCountdown);
+    </script>
 </body>
 </html>
