@@ -7,13 +7,13 @@
     <style>
         @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttf'); font-display: swap; }
         @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
-        @font-face { font-family: 'FZFangSong'; src: url('fonts/方正仿宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZKai'; src: url('fonts/方正楷体简体.ttf'); font-display: swap; }
         @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
         @font-face { font-family: 'XITS'; src: url('fonts/XITS.otf'); font-display: swap; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'FZFangSong', sans-serif; min-height: 100vh;
+            font-family: 'FZShuSong', sans-serif; min-height: 100vh;
             background-color: #f4f7f9; background-image: url('bg.jpg');
             background-repeat: no-repeat; background-position: center center;
             background-size: cover; background-attachment: fixed; color: #000000; overflow-x: hidden;
@@ -36,7 +36,7 @@
             background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px; padding: 25px; margin-bottom: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);
-            /* 原版作业页标准弹力曲线 */
+            /* 弹力曲线 */
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
             -webkit-transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
             isolation: isolate;
@@ -127,7 +127,7 @@
             position: absolute;
             top: 4px;
             right: 6px;
-            font-family: 'FZFangSong', sans-serif;
+            font-family: 'FZKai', sans-serif;
             font-size: 13px;
             font-weight: bold;
         }

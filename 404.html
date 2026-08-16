@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 页面未找到 | 孤鸿组</title>
+    <meta name="robots" content="noindex">
+    <style>
+        /* 1. 字体配置 */
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttf'); }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'FZShuSong', sans-serif; 
+            min-height: 100vh;
+            background-color: #f4f7f9; 
+            background-image: url('bg.jpg'); 
+            background-repeat: no-repeat; 
+            background-position: center center;
+            background-size: cover; 
+            background-attachment: fixed; 
+            color: #000000; 
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 2. 顶部导航栏 */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); 
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
+
+        /* 3. 主体区域布局 */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 20px 60px;
+        }
+
+        /* 4. 核心卡片样式 - 【照抄参考代码的力学弹力逻辑】 */
+        .error-card {
+            /* 基础玻璃拟态样式 */
+            background: rgba(255, 255, 255, 0.25); 
+            backdrop-filter: blur(30px) saturate(180%); 
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); 
+            border-radius: 32px; 
+            padding: 60px 40px; 
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+            
+            /* 【关键】：启用 CSS 弹性过渡，参数与 glass-card 完全一致 */
+            /* cubic-bezier(0.175, 0.885, 0.32, 1.275) 是产生“果冻感”过冲回弹的核心 */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            
+            cursor: pointer; /* 提示可点击 */
+            position: relative;
+            will-change: transform;
+        }
+
+        /* 【关键】：悬停时轻微上浮 */
+        .error-card:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-5px);
+        }
+
+        /* 【关键】：点击时缩小，模拟按压感 */
+        .error-card:active {
+            transform: scale(0.96);
+        }
+
+        /* 5. 内容排版 */
+        .error-icon-wrapper { margin-bottom: 20px; display: inline-block; }
+        
+        .error-icon {
+            width: 80px; height: 80px;
+            fill: none; stroke: #16375D; stroke-width: 1.5;
+            stroke-linecap: round; stroke-linejoin: round;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .error-code {
+            font-family: 'FZHei', sans-serif;
+            font-size: 100px;
+            line-height: 1;
+            color: #16375D;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-shadow: 0 10px 20px rgba(22, 55, 93, 0.1);
+        }
+
+        .error-desc {
+            font-family: 'FZShuSong', serif;
+            font-size: 18px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* 返回首页按钮样式 */
+        .home-btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: rgba(22, 55, 93, 0.08);
+            border: 1px solid rgba(22, 55, 93, 0.1);
+            border-radius: 50px;
+            color: #16375D;
+            font-family: 'FZHei', sans-serif;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .home-btn:hover {
+            background: rgba(22, 55, 93, 0.15);
+            box-shadow: 0 5px 15px rgba(22, 55, 93, 0.1);
+        }
+
+        footer {
+            text-align: center; padding: 20px;
+            font-family: 'FZShuSong', serif; font-size: 12px; color: #666;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 600px) {
+            .error-card { padding: 40px 20px; margin: 0 10px; }
+            .error-code { font-size: 80px; }
+            header { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">页面未找到</div>
+    </header>
+
+    <main>
+        <!-- 核心错误提示卡片：已应用玻璃卡片力学弹力 -->
+        <div class="error-card" id="physicsCard">
+            <div class="error-icon-wrapper">
+                <svg class="error-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                </svg>
+            </div>
+            
+            <div class="error-code">404</div>
+            
+            <p class="error-desc">
+                抱歉，你访问的页面似乎迷失在了风中。<br>
+                它可能已被移除，或者地址输入有误。
+            </p>
+            
+            <a href="index.html" class="home-btn">返回首页</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>千问提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+
+    <!-- 已移除所有复杂的 JS 物理引擎脚本，纯 CSS 实现更流畅的果冻感 -->
+</body>
+</html>
