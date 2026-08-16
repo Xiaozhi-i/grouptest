@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孤鸿组 - 暑期专题讲解（二）初中生物学</title>
+    <style>
+        /* ============================================
+           1. 严格字体导入 (已移除无用仿宋，统一使用书宋)
+           ============================================ */
+        @font-face { font-family: 'MengyuanSong'; src: url('../../fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('../../fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('../../fonts/方正书宋简体.ttf'); font-display: swap; }
+
+        /* XITS 常规体 (强制不加斜体) */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS.otf'); font-weight: normal; font-style: normal; font-display: swap; }
+        /* XITS 粗体 (XITS-Bold) */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS-Bold.otf'); font-weight: bold; font-style: normal; font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* 全局重置：默认使用方正书宋简体，不加粗、不斜体 */
+        body {
+            font-family: 'FZShuSong', serif;
+            font-weight: 400;
+            font-style: normal;
+            background-color: #f4f7f9; background-image: url('../../bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #111; overflow-x: hidden;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; font-weight: 400; }
+
+        main { padding: 104px 20px 40px; max-width: 900px; margin: 0 auto; }
+
+        /* ============================================
+           ⚡ 力学弹力动画卡片
+           ============================================ */
+        .video-player-card,
+        .text-card {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        .video-player-card:active,
+        .text-card:active { transform: scale(0.96); }
+
+        /* ============================================
+           视频播放容器
+           ============================================ */
+        .video-player-card {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+        .video-wrapper {
+            width: 100%; position: relative; padding-bottom: 56.25%; /* 16:9 比例 */
+            height: 0; overflow: hidden; border-radius: 12px; background: #000;
+        }
+        .video-wrapper video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 0; outline: none;
+            object-fit: cover;
+        }
+
+        /* ============================================
+           文稿卡片样式
+           ============================================ */
+        .text-card {
+            background: rgba(255, 255, 255, 0.6); border-radius: 24px;
+            padding: 40px; border: 1px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px); font-size: 18px; line-height: 2;
+        }
+
+        .text-card h1 { font-family: 'MengyuanSong', serif; font-size: 36px; text-align: center; margin-bottom: 30px; color: #16375D; font-weight: 400; font-style: normal; }
+        .text-card h2 { font-family: 'FZHei', sans-serif; font-size: 26px; margin-top: 40px; margin-bottom: 15px; color: #16375D; font-weight: 400; font-style: normal; }
+
+        /* 标准正文（汉字与数字 - 方正书宋简体） */
+        .txt { font-family: 'FZShuSong', serif !important; font-weight: 400 !important; font-style: normal !important; }
+
+        /* 英文与符号格式（强制禁用斜体） */
+        .xits-normal { font-family: 'XITS', serif; font-weight: 400; font-style: normal; }
+        .xits-bold { font-family: 'XITS', serif; font-weight: bold; font-style: normal; }
+
+        /* 数学公式与专用颜色 */
+        .math-box { margin: 15px 0 20px 20px; padding: 15px 20px; background: rgba(255,255,255,0.5); border-radius: 12px; border-left: 4px solid #16375D; }
+        .highlight-blue { color: #1E88E5; }
+        .highlight-red { color: #D32F2F; }
+
+        @media (max-width: 600px) {
+            header { padding: 15px 20px; }
+            .text-card { padding: 20px; }
+            .text-card h1 { font-size: 28px; }
+            .text-card h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="../../logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">暑期专题讲解（二）</div>
+    </header>
+
+    <main>
+        <!-- 1. 视频卡片容器 -->
+        <div class="video-player-card">
+            <div class="video-wrapper">
+                <video src="2.mp4" poster="2.png" controls playsinline></video>
+            </div>
+        </div>
+
+        <!-- 2. 讲义文稿容器 -->
+        <div class="text-card">
+
+            <h1>前言</h1>
+            <p class="txt">
+                各位生地会考解放不久的战友们！<br>
+                卷子交上去那一刻是不是长舒一口气？以为再也不用背生物了？别急！今天咱们唠生物学，拒绝枯燥背诵，<span class="txt">主打一个人话+搞笑记忆</span>，不用死磕长篇大论，看完脑子自动留住知识点。<br><br>
+                事先声明：不讲超难压轴题，专攻容易混淆、考试疯狂挖坑的高频考点，全程无枯燥学术废话！<br><br>
+                <span style="text-align: center; display: block;">“讲到这里有没有发现，生物学很多扣分点，不是你不会，是出题人专门挖各种奇葩陷阱阴人！”</span><br><br>
+                “很多知识点只要别死记，脑洞开大一点，瞬间就能分清，不用熬夜硬背！”
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 模块一：细胞篇                                   -->
+            <!-- ============================================ -->
+            <h2>模块一 细胞篇</h2>
+            <h2 style="font-size: 22px; margin-top: 0;">核心区分</h2>
+            <p class="txt">
+                植物细胞独有：细胞壁、叶绿体、液泡<br>
+                动物细胞啥都没有！<br><br>
+                <span style="font-size: 22px; color: #FFC107;">💡</span> <span class="txt">搞笑记忆口诀：</span><br>
+                <span class="txt">植物有三房（细胞壁、叶绿体、液泡），动物裸奔没装备。</span>
+            </p>
+
+            <h2 style="font-size: 22px; margin-top: 20px; color: #16375D;">避坑！地狱级大坑：</h2>
+            <p class="txt">
+                不是所有植物细胞都有叶绿体！<br>
+                根细胞常年埋土里见不到太阳，它要叶绿体干啥晒太阳？<span class="txt">别做题看见植物细胞就默认带叶绿体</span>，一踩一个扣分！
+            </p>
+
+            <h2 style="font-size: 22px; margin-top: 20px;">细胞器极简搞笑翻译：</h2>
+            <p class="txt">
+                <span class="xits-bold highlight-blue">1.</span> 细胞壁：小区围墙，硬邦邦，维持外形<br>
+                <span class="xits-bold highlight-blue">2.</span> 细胞膜：小区保安，管控进出，想进就进不存在<br>
+                <span class="xits-bold highlight-blue">3.</span> 细胞核：小区物业办公室，存放遗传<span class="xits-normal">DNA</span>，总指挥<br>
+                <span class="xits-bold highlight-blue">4.</span> 线粒体：食堂！提供能量，所有活细胞必备<br>
+                <span class="xits-bold highlight-blue">5.</span> 叶绿体：专属奶茶店，只搞光合作用，制造有机物<br>
+                <span class="xits-bold highlight-blue">6.</span> 液泡：储藏仓库，水果甜味、酸味全都藏这里<br>
+                <span class="txt">灵魂吐槽：线粒体全员标配，叶绿体是植物限定<span class="xits-normal">VIP</span>！</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 模块二：生态系统                                   -->
+            <!-- ============================================ -->
+            <h2>模块二 生态系统</h2>
+            <h2 style="font-size: 22px; margin-top: 0;">铁律：</h2>
+            <p class="txt">
+                <span class="xits-bold highlight-blue">1.</span> 食物链起点只能是生产者（绿色植物）<br>
+                <span class="xits-bold highlight-blue">2.</span> 终点：最高级消费者<br>
+                <span class="xits-bold highlight-blue">3.</span> <span class="highlight-red xits-bold">❌</span> 禁止出现分解者（细菌真菌不配进食物链！）<br>
+                <span class="xits-bold highlight-blue">4.</span> 箭头方向不能反！箭头=被吃掉<br>
+                <span class="txt">正确写法：草→兔子→老鹰</span><br>
+                <span class="txt">错误示范：老鹰→兔子→草（难道老鹰被兔子啃？离谱）</span><br>
+                <span class="txt">搞笑梗：箭头别画反，不然食物链直接大型逆世界，兔子捕食老鹰，阅卷老师笑完直接扣分。</span>
+            </p>
+
+            <h2 style="font-size: 22px; margin-top: 20px;">能量流动真相：</h2>
+            <p class="txt">
+                能量顺着食物链越传越少，所以顶级食肉动物数量最少。<br>
+                <span class="txt">简单理解：一片草地养成千上万兔子，但兔子养不了几只老鹰，饭不够吃！</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 模块三：光合作用&呼吸作用                          -->
+            <!-- ============================================ -->
+            <h2>模块三 光合作用&呼吸作用</h2>
+            <h2 style="font-size: 22px; margin-top: 0;">一句话分清</h2>
+            <p class="txt">
+                <span style="font-size: 22px;">☀️</span> 光合作用：只白天干活，造有机物、存能量，吸二氧化碳，放氧气<br>
+                <span style="font-size: 22px;">📍</span> 场所：叶绿体<br><br>
+                <span style="font-size: 22px;">🌙</span> 呼吸作用：全天无休！白天黑夜永不摸鱼，消耗有机物、释放能量，吸氧气，排二氧化碳<br>
+                <span style="font-size: 22px;">📍</span> 场所：线粒体
+            </p>
+
+            <h2 style="font-size: 22px; margin-top: 20px;">致命误区（<span class="highlight-red xits-bold">90%</span>考生翻车点）：</h2>
+            <p class="txt">
+                不要觉得：白天植物只光合，不呼吸！<br>
+                <span class="txt">搞笑吐槽：植物没有下班时间！白天一边造养分，一边持续呼吸，</span><span class="xits-normal">24</span>小时在线打工。
+            </p>
+
+            <h2 style="font-size: 22px; margin-top: 20px;">极简顺口溜</h2>
+            <p class="txt">
+                <span class="txt">光合：吸碳放氧，攒钱（储存能量）</span><br>
+                <span class="txt">呼吸：吸氧排碳，花钱（消耗能量）</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 模块四：人体消化系统                             -->
+            <!-- ============================================ -->
+            <h2>模块四 人体消化系统</h2>
+            <p class="txt">
+                口腔：只磨碎食物，淀粉初步分解<br>
+                胃：搅碎食物，初步消化蛋白质<br>
+                <span class="highlight-red xits-bold">⚠️</span> 重点！小肠才是终极大佬：主要消化+吸收场所<br>
+                大肠：只负责吸收水、无机盐，不消化食物<br>
+                直肠：单纯存货，等待出库<br><br>
+                <span class="txt">搞笑总结：口腔负责嚼，胃负责揉，小肠狂吸收，大肠只管抽水。</span><br><br>
+                胆汁小知识点：肝脏生产胆汁，胆囊储存胆汁！<br><br>
+                <span class="highlight-red xits-bold">大坑：</span> 胆汁不含消化酶！<br>
+                <span class="txt">吐槽：胆汁属于物理搅拌选手，没有化学攻击能力，别乱写！</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 模块五：血液循环                                 -->
+            <!-- ============================================ -->
+            <h2>模块五 血液循环</h2>
+            <h2 style="font-size: 22px; margin-top: 0;">区分动脉、静脉、动脉血、静脉血</h2>
+            <p class="txt">
+                不要死板记忆：动脉=含氧多！大错特错<br><br>
+                <span class="highlight-green xits-bold">✅</span> 真理：<br>
+                动脉血管：血液流出心脏<br>
+                静脉血管：血液流回心脏<br>
+                动脉血：鲜红、氧气充足<br>
+                静脉血：暗红、氧气少<br><br>
+                <span class="highlight-red xits-bold">爆坑特例</span>：肺动脉里面流静脉血；肺静脉流动脉血<br>
+                <span class="txt">搞笑记忆：肺血管不走寻常路，属于考场内的叛逆分子，专门坑不记特例的人。</span><br><br>
+                心脏四个腔小口诀：<span class="txt">上房下室，左右相反；房连静脉，室连动脉</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 模块六：遗传&生殖                                -->
+            <!-- ============================================ -->
+            <h2>模块六 遗传&生殖</h2>
+            <p class="txt">
+                <span class="xits-bold highlight-blue">1.</span> 受精卵=新生命起点！别写卵细胞、精子<br>
+                <span class="txt">吐槽：精子卵子单独放一块不能发育，必须组队合体才开启人生。</span><br><br>
+                <span class="xits-bold highlight-blue">2.</span> 染色体：人一共<span class="xits-normal">23</span>对，体细胞成对，生殖细胞（精子、卵细胞）只<span class="xits-normal">23</span>条<br>
+                <span class="txt">简单理解：生殖细胞主动减半，方便组队凑齐数量。</span><br><br>
+                <span class="txt">显性基因<span class="xits-normal">A</span>，隐性<span class="xits-normal">a</span></span><br>
+                <span class="xits-normal">AA</span>、<span class="xits-normal">Aa</span>表现显性性状；<span class="xits-normal">aa</span>才是隐性性状<br>
+                <span class="txt">搞笑例子：双眼皮<span class="xits-normal">A</span>，单眼皮<span class="xits-normal">a</span>。</span><br>
+                <span class="txt">就算携带单眼皮基因(<span class="xits-normal">Aa</span>)，外表依旧双眼皮，隐性基因属于幕后卧底，不暴露。</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 模块七：传染病和免疫                             -->
+            <!-- ============================================ -->
+            <h2>模块七 传染病和免疫</h2>
+            <p class="txt">
+                传染源：生病的人/动物（自带病毒）<br>
+                传播途径：空气、水、蚊虫<br>
+                易感人群：容易被感染的普通人<br><br>
+                <span class="highlight-red xits-bold">别混淆传染源！</span><br>
+                <span class="txt">吐槽：病毒不算传染源！携带病毒的生命体才算，别张冠李戴。</span><br><br>
+                <span class="xits-bold">三道防线：</span><br>
+                皮肤黏膜→城墙；体液杀菌物质→巡逻小兵；免疫器官特种兵<br><br>
+                区分特异性/非特异性免疫：<br>
+                非特异性：天生自带，对所有病菌通用（皮肤、溶菌酶）<br>
+                特异性：后天解锁，精准打击单一病毒（打疫苗产生抗体）<br>
+                疫苗小科普：疫苗属于“模拟反派”，提前训练免疫系统练兵，不会致病。
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 结束语                                         -->
+            <!-- ============================================ -->
+            <h1 style="text-align: center; margin-top: 40px;">结束语</h1>
+            <p class="txt" style="font-size: 20px; text-align: center; line-height: 2.2;">
+                生物学学习终极心法：<br>
+                拒绝死记硬背，多找对比，分清特例！<br>
+                考试看见“全部、一定、所有”这种极端词语，优先警惕，大概率是陷阱选项。<br>
+                生地会考已经落幕，但生物学知识点以后依旧要用。<br>
+                如果这份内容对你有用，别光顾收藏，抓紧消化！
+            </p>
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 30px; font-family: 'FZShuSong', serif; font-size: 14px; color: #000; backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border-radius: 24px; margin-top: 40px;">
+        <p>DeepSeek提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+</body>
+</html>
