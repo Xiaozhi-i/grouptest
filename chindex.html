@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>攸县长鸿实验学校 - 官网</title>
+    <style>
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'FZFangSong', sans-serif; min-height: 100vh;
+            background-color: #f4f7f9; background-image: url('bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #000000; overflow-x: hidden;
+        }
+        
+        /* 顶部导航栏 */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 40px; width: auto; border-radius: 8px; object-fit: contain; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 26px; color: #16375D; font-weight: 400; letter-spacing: 2px; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 18px; color: #000; opacity: 0.8; }
+
+        /* 主体内容区域 */
+        main {
+            padding: 100px 20px 40px; max-width: 1200px; margin: 0 auto;
+            display: flex; flex-direction: column; align-items: center; gap: 30px;
+        }
+
+        /* 学校官网容器 - 复用玻璃拟态风格 */
+        .school-iframe-container {
+            width: 100%; height: 80vh; /* 占据视口高度的80% */
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);    
+            overflow: hidden; position: relative;
+            transition: transform 0.22s ease, background 0.3s;
+        }
+        .school-iframe-container:hover { background: rgba(255, 255, 255, 0.25); }
+
+        /* iframe 样式重置 */
+        .school-iframe-container iframe {
+            width: 100%; height: 100%; border: none;
+            /* 关键修复：允许iframe接收滚动事件 */
+            display: block; 
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 12px 30px; font-family: 'FZHei', sans-serif; font-size: 18px;
+            color: #16375D; text-decoration: none;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        .back-btn:active {
+            transform: scale(0.98);
+        }
+        .icon-svg { width: 20px; height: 20px; margin-right: 8px; fill: none; stroke: #16375D; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        footer {
+            text-align: center; padding: 20px; margin-top: auto;
+            font-family: 'FZShuSong', serif; font-size: 14px; color: #000;
+            backdrop-filter: blur(10px); background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <!-- 这里的 src 指向了你要求的 schoollogo.png，alt 文本体现了融合的概念 -->
+            <img src="schoollogo.png" alt="攸县长鸿学校标志">
+        </div>
+        <div class="page-title">官网</div>
+    </header>
+
+    <main>
+        <!-- 嵌套的学校官网容器 -->
+        <div class="school-iframe-container" id="iframeWrapper">
+            <!-- 嵌入提供的网址 -->
+            <iframe src="http://www.zzch.cn/" title="攸县长鸿实验学校官网" id="schoolIframe"></iframe>
+        </div>
+
+        <!-- 返回主页按钮 -->
+        <a href="index.html" class="back-btn">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
+            返回主页
+        </a>
+    </main>
+
+    <footer>
+        <p>千问提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframe = document.getElementById('schoolIframe');
+            const container = document.getElementById('iframeWrapper');
+
+            // 监听 iframe 加载完成
+            iframe.onload = function() {
+                try {
+                    // 尝试获取 iframe 内部的 document 对象
+                    // 注意：如果目标网站设置了跨域策略（CORS），这一步可能会报错，
+                    // 但现代浏览器通常允许在同源策略下传递 wheel 事件。
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    // 监听 iframe 内部的滚轮事件
+                    iframeDoc.addEventListener('wheel', function(e) {
+                        // 阻止 iframe 内部默认的滚动行为（防止冲突）
+                        // e.preventDefault(); // 慎用，可能会导致内部无法滚动
+
+                        // 将滚动事件传递给外部容器
+                        container.scrollTop += e.deltaY;
+                    }, { passive: false });
+
+                } catch (err) {
+                    console.warn('无法直接访问 iframe 内容（可能是跨域限制），尝试监听 iframe 元素本身的 wheel 事件。', err);
+                    
+                    // 备选方案：直接监听 iframe 元素的 wheel 事件
+                    // 这在大多数现代浏览器中对于滚动穿透是有效的
+                    iframe.addEventListener('wheel', function(e) {
+                         // 如果容器已经到底了，或者还没到顶，允许事件冒泡或者手动处理
+                         // 这里我们简单地让容器跟随滚动
+                         if (container.scrollHeight - container.clientHeight > container.scrollTop) {
+                              // 只有当容器没到底时才干预，或者根据需求调整逻辑
+                              container.scrollTop += e.deltaY;
+                         }
+                    }, { passive: true });
+                }
+            };
+        });
+    </script>
+</body>
+</html>

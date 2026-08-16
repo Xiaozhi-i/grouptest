@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>孤鸿组 - 校歌《启航》</title>
+    <style>
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'FZShuSong', serif;
+            background-color: #f4f7f9; 
+            background-image: url('bg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        body.lightbox-lock {
+            overflow-y: hidden;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 30px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.4); 
+            border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 32px; width: 32px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
+
+        main { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 80px 20px 40px; width: 100%;
+        }
+
+        .album-container {
+            position: relative;
+            width: 94%; 
+            max-width: 920px;
+            aspect-ratio: auto;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(22, 55, 93, 0.12);
+            overflow: hidden;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        .album-container:hover { transform: translateY(-5px); }
+
+        .album-container img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .glass-btn-wrap {
+            position: absolute;
+        }
+
+        .glass-play-btn, .close-btn {
+            position: relative; 
+            --w: 56px;
+            --h: 56px;
+            --r: 50%;
+            --glass-blur: 10px;
+            --bg-alpha: 0.22;
+            --highlight-1: 0.92;
+            --highlight-2: 0.55;
+            --inner-shadow-alpha:0.08;
+            --outer-shadow-alpha:0.18;
+            --icon-color:#000000;
+
+            border-radius: var(--r);
+            width: var(--w); 
+            height: var(--h);
+            flex-shrink: 0;
+            
+            background: rgba(255, 255, 255, var(--bg-alpha));
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+
+            border: 1px double rgba(51, 51, 51, 0.08);
+
+            box-shadow: 
+                inset 2px -2px 1px -1px rgba(255, 255, 255, var(--highlight-1)),
+                inset -2px 2px 1px -1px rgba(255, 255, 255, var(--highlight-1)),
+                inset 6px -6px 1px -6px rgba(255, 255, 255, var(--highlight-2)),
+                inset -6px 6px 1px -6px rgba(255, 255, 255, var(--highlight-2)),
+                inset 0 0 2px rgba(0, 0, 0, var(--inner-shadow-alpha)),
+                0 4px 8px rgba(0, 0, 0, var(--outer-shadow-alpha));
+
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            z-index: 10; 
+        }
+
+        .glass-play-btn::before, .close-btn::before {
+            content: '';
+            position: absolute;
+            z-index: 1;
+            width: calc(var(--w) - 16px);
+            height: calc(var(--h) - 16px);
+            border-radius: var(--r);
+            border:1px solid rgba(0,0,0,0.15);
+            filter: blur(4px);
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .glass-play-btn::after, .close-btn::after {
+            content: '';
+            position: absolute;
+            z-index: 2;
+            width: calc(var(--w) - 9px);
+            height: calc(var(--h) - 9px);
+            border-radius: var(--r);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            filter: blur(1px);
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .glass-play-btn-wrap {
+            top: 16px; 
+            right: 24px;
+        }
+
+        .glass-play-btn:active {
+            transform: scale(0.92);
+            transition: transform 0.12s ease;
+        }
+
+        .close-btn-wrap {
+            top: 40px; 
+            right: 30px; 
+            z-index: 1001;
+        }
+
+        .close-btn {
+            color: var(--icon-color); 
+            font-size: 32px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .close-btn span {
+            display: inline-block;
+            transition: transform 0.35s ease;
+            z-index:3;
+            position:relative;
+        }
+
+        .close-btn:hover span {
+            transform: rotate(90deg);
+        }
+
+        .play-icon {
+            width: 0; 
+            height: 0; 
+            border-style: solid;
+            border-width: 11px 0 11px 16px;
+            border-color: transparent transparent transparent var(--icon-color);
+            margin-left: 4px;
+            transition: all 0.14s ease;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.14));
+            z-index:3;
+            position:relative;
+        }
+
+        .glass-play-btn.playing .play-icon {
+            border-width: 0; 
+            width: 16px; 
+            height: 18px;
+            border-left: 4px solid var(--icon-color);
+            border-right: 4px solid var(--icon-color);
+            margin-left: 0;
+            background: transparent;
+        }
+
+        /* 灯箱：仅透明度淡入淡出，无图片缩放动画 */
+        .lightbox {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
+            background: #000; 
+            z-index: 1000;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 0.32s ease;
+            overflow: hidden; 
+            touch-action: none;
+        }
+
+        .lightbox.active { 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+
+        .lightbox-img-wrapper {
+            position: relative; 
+            width: 100%; 
+            height: 100%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        
+        .lightbox-img {
+            width: 100%; 
+            height: auto;
+            max-height: 100%;
+            object-fit: contain;
+            transform-origin: center center;
+            transition: none;
+            user-select: none; 
+            -webkit-user-drag: none;
+        }
+
+        footer { 
+            text-align: center; 
+            padding: 20px; 
+            font-size: 12px; 
+            color: #666; 
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">校歌</div>
+    </header>
+    
+    <main>
+        <div class="album-container" id="albumTrigger">
+            <img src="qihang.jpg" alt="校歌乐谱" id="coverImg" onerror="this.src='https://via.placeholder.com/800x800/16375D/ffffff?text=School+Anthem'">
+
+            <div class="glass-btn-wrap glass-play-btn-wrap">
+                <div class="glass-play-btn" id="playBtn">
+                    <div class="play-icon"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="lightbox" id="lightbox">
+        <div class="glass-btn-wrap close-btn-wrap">
+            <div class="close-btn" id="closeBtn">
+                <span>×</span>
+            </div>
+        </div>
+
+        <div class="lightbox-img-wrapper" id="imgWrapper">
+            <img src="qihang.jpg" class="lightbox-img" id="fullImg">
+        </div>
+    </div>
+
+    <audio id="audioPlayer" loop>
+        <source src="qihang.mp3" type="audio/mpeg">
+    </audio>
+
+    <footer>哔哩哔哩UP主圆子软糖At、豆包、DeepSeek、千问提供技术支持 &copy; 2026 孤鸿组</footer>
+
+    <script>
+        const playBtn = document.getElementById('playBtn');
+        const audio = document.getElementById('audioPlayer');
+        let isPlaying = false;
+
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) {
+                audio.pause();
+                playBtn.classList.remove('playing');
+            } else {
+                audio.play().then(() => {
+                    playBtn.classList.add('playing');
+                }).catch(error => {
+                    console.error("播放失败:", error);
+                    alert("请先与页面进行交互以启用音频播放。");
+                });
+            }
+            isPlaying = !isPlaying;
+        });
+
+        const albumTrigger = document.getElementById('albumTrigger');
+        const lightbox = document.getElementById('lightbox');
+        const fullImg = document.getElementById('fullImg');
+        const closeBtn = document.getElementById('closeBtn');
+        const imgWrapper = document.getElementById('imgWrapper');
+
+        let scale = 1;
+        let panning = false;
+        let pointX = 0, pointY = 0, startX = 0, startY = 0;
+
+        const THROTTLE_MS = 100;
+        let lastSampleTs = 0;
+        const INTERP_DURATION = 260;
+
+        let btnState = {
+            blur: 9,
+            alpha: 0.22,
+            h1: 0.92,
+            h2: 0.55,
+            inner: 0.08,
+            outer: 0.18,
+            icon: "#ffffff"
+        };
+        let currentTargetKey = null;
+        let animFrameId = null;
+        let debounceTimer = null;
+
+        albumTrigger.addEventListener('click', () => {
+            document.body.classList.add('lightbox-lock');
+            // 仅开启灯箱，图片不做缩放入场动画，只有背景淡入
+            lightbox.classList.add('active');
+            resetZoomSmooth();
+            updateCloseBtnStyle(true);
+        });
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            // 等待opacity淡入淡出完成，解除页面锁定，修复页脚被隐藏
+            setTimeout(()=>{
+                document.body.classList.remove('lightbox-lock');
+                resetZoomSmooth();
+            },320);
+        }
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target === imgWrapper) closeLightbox();
+        });
+        closeBtn.addEventListener('click', closeLightbox);
+
+        function resetZoomSmooth() {
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+            updateTransform();
+            setTimeout(() => {
+                updateCloseBtnStyle(true);
+            }, 320);
+        }
+
+        function getInsideImgParam() {
+            return {
+                blur: 12,
+                alpha: 0.10,
+                h1: 0.42,
+                h2: 0.12,
+                inner: 0.28,
+                outer: 0.30,
+                icon: "#000000",
+                key:"inside"
+            };
+        }
+
+        function getOutsideImgParam() {
+            return {
+                blur: 6,
+                alpha: 0.16,
+                h1: 0.95,
+                h2: 0.62,
+                inner: 0.04,
+                outer: 0.12,
+                icon: "#ffffff",
+                key:"outside"
+            };
+        }
+
+        function syncDomFromState(btnEl) {
+            btnEl.style.setProperty('--glass-blur', btnState.blur.toFixed(1) + 'px');
+            btnEl.style.setProperty('--bg-alpha', btnState.alpha.toFixed(3));
+            btnEl.style.setProperty('--highlight-1', btnState.h1.toFixed(3));
+            btnEl.style.setProperty('--highlight-2', btnState.h2.toFixed(3));
+            btnEl.style.setProperty('--inner-shadow-alpha', btnState.inner.toFixed(3));
+            btnEl.style.setProperty('--outer-shadow-alpha', btnState.outer.toFixed(3));
+            btnEl.style.setProperty('--icon-color', btnState.icon);
+        }
+
+        function animateButton(target, btnEl) {
+            if(currentTargetKey === target.key) return;
+            if(animFrameId !== null){
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
+                syncDomFromState(btnEl);
+            }
+            currentTargetKey = target.key;
+
+            const start = { ...btnState };
+            const startTs = performance.now();
+
+            function tick() {
+                const elapsed = performance.now() - startTs;
+                const t = Math.min(elapsed / INTERP_DURATION, 1.0);
+                const easeT = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+                btnState.blur = start.blur + (target.blur - start.blur) * easeT;
+                btnState.alpha = start.alpha + (target.alpha - start.alpha) * easeT;
+                btnState.h1 = start.h1 + (target.h1 - start.h1) * easeT;
+                btnState.h2 = start.h2 + (target.h2 - start.h2) * easeT;
+                btnState.inner = start.inner + (target.inner - start.inner) * easeT;
+                btnState.outer = start.outer + (target.outer - start.outer) * easeT;
+                btnState.icon = target.icon;
+
+                btnEl.style.setProperty('--glass-blur', btnState.blur.toFixed(1) + 'px');
+                btnEl.style.setProperty('--bg-alpha', btnState.alpha.toFixed(3));
+                btnEl.style.setProperty('--highlight-1', btnState.h1.toFixed(3));
+                btnEl.style.setProperty('--highlight-2', btnState.h2.toFixed(3));
+                btnEl.style.setProperty('--inner-shadow-alpha', btnState.inner.toFixed(3));
+                btnEl.style.setProperty('--outer-shadow-alpha', btnState.outer.toFixed(3));
+                btnEl.style.setProperty('--icon-color', btnState.icon);
+
+                if (t < 1) {
+                    animFrameId = requestAnimationFrame(tick);
+                }else{
+                    animFrameId = null;
+                }
+            }
+            tick();
+        }
+
+        function updateCloseBtnStyle(force = false) {
+            if (!lightbox.classList.contains('active')) return;
+            const now = performance.now();
+            if (!force && (now - lastSampleTs < THROTTLE_MS)) return;
+            lastSampleTs = now;
+
+            const btnRect = closeBtn.getBoundingClientRect();
+            const imgRect = fullImg.getBoundingClientRect();
+
+            const cx = btnRect.left + btnRect.width / 2;
+            const cy = btnRect.top + btnRect.height / 2;
+
+            const isInsideImg = (
+                cx >= imgRect.left &&
+                cx <= imgRect.right &&
+                cy >= imgRect.top &&
+                cy <= imgRect.bottom
+            );
+
+            if (isInsideImg) {
+                animateButton(getInsideImgParam(), closeBtn);
+            } else {
+                animateButton(getOutsideImgParam(), closeBtn);
+            }
+        }
+
+        function triggerDebounceCheck() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(()=>{
+                updateCloseBtnStyle(true);
+            }, 40);
+        }
+
+        function updatePlayBtnOnWhite() {
+            const btn = document.getElementById("playBtn");
+            btnState = {
+                blur: 12,
+                alpha: 0.10,
+                h1: 0.42,
+                h2: 0.12,
+                inner: 0.28,
+                outer: 0.30,
+                icon: "#000000"
+            };
+            syncDomFromState(btn);
+        }
+
+        function updateTransform() {
+            fullImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+            updateCloseBtnStyle();
+        }
+
+        let initialDistance = 0;
+        let initialScale = 1;
+
+        fullImg.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialScale = scale;
+                e.preventDefault();
+            } else if (e.touches.length === 1 && scale > 1) {
+                panning = true;
+                startX = e.touches[0].clientX - pointX;
+                startY = e.touches[0].clientY - pointY;
+            }
+        }, { passive: false });
+
+        fullImg.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                scale = initialScale * (currentDistance / initialDistance);
+                updateTransform();
+                e.preventDefault();
+            } else if (panning && scale > 1) {
+                pointX = e.touches[0].clientX - startX;
+                pointY = e.touches[0].clientY - startY;
+                updateTransform();
+            }
+        }, { passive: false });
+
+        fullImg.addEventListener('touchend', () => {
+            panning = false;
+            triggerDebounceCheck();
+        });
+
+        fullImg.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            scale *= delta;
+            updateTransform();
+            triggerDebounceCheck();
+        });
+
+        requestAnimationFrame(() => {
+            updatePlayBtnOnWhite();
+        });
+    </script>
+</body>
+</html>

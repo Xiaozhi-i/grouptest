@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孤鸿组 - 通知</title>
+    <style>
+        /* 1. 字体声明 */
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); }
+
+        /* 2. 基础重置 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'FZShuSong', serif;
+            min-height: 100vh;
+            background-color: #f4f7f9; 
+            background-image: url('bg.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            background-attachment: fixed;
+            color: #000000;
+        }
+
+        /* 3. 顶栏样式 */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); 
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); 
+            border-bottom-left-radius: 24px; 
+            border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); 
+            border-top: none;
+            transition: background 0.3s;
+        }
+        header.scrolled { background: rgba(255, 255, 255, 0.5); }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
+
+        /* 4. 【核心修复】内容区必须加 padding-top，防止被固定顶栏遮挡 */
+        main { 
+            padding: 120px 20px 40px; 
+            max-width: 900px; 
+            margin: auto; 
+        }
+
+        /* 5. 极致通透液态玻璃卡片 (已补全弹性动效) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(24px) saturate(180%); 
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); 
+            border-radius: 24px; 
+            padding: 30px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9);    
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+        }
+        .glass-card:hover { background: rgba(255, 255, 255, 0.35); transform: translateY(-5px); }
+        .glass-card:active { transform: scale(0.96); }
+
+        /* 6. 通知列表样式 */
+        .notice-item { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 15px 0; }
+        .notice-item:last-child { border-bottom: none; }
+        .notice-date { 
+            font-size: 14px; 
+            color: #16375D; 
+            opacity: 0.7; 
+            margin-bottom: 5px; 
+        }
+        .notice-title { 
+            font-family: 'FZHei', sans-serif; 
+            font-size: 18px; 
+            margin-bottom: 8px; 
+            color: #16375D; 
+        }
+        .notice-desc { 
+            font-family: 'FZShuSong', serif; 
+            font-size: 16px; 
+            color: #000; 
+            line-height: 1.6; 
+        }
+
+        /* 7. 页脚 */
+        footer {
+            text-align: center; padding: 30px; margin-top: 40px;
+            font-family: 'FZShuSong', serif; font-size: 14px; color: #000;
+            backdrop-filter: blur(10px); background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">班级通知</div>
+    </header>
+    
+    <main>
+        <div class="glass-card">
+            <div class="notice-item">
+                <div class="notice-date">None</div>
+                <div class="notice-title">测试</div>
+                <p class="notice-desc">测试。</p>
+            </div>
+            <div class="notice-item">
+                <div class="notice-date">None</div>
+                <div class="notice-title">测试</div>
+                <p class="notice-desc">测试。</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>千问提供技术支持 &copy; 2026 孤鸿组</footer>
+
+    <!-- 仅保留顶栏滚动模糊的极简脚本，已彻底删除字体替换逻辑 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.scrollY > 20);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>孤鸿组 - 智慧课表</title>
+    <style>
+        /* 1. 字体声明 */
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'XITS'; src: url('fonts/XITS.otf') format('opentype'); font-weight: normal; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'XITS'; src: url('fonts/XITS-Bold.otf') format('opentype'); font-weight: bold; font-style: normal; font-display: swap; }
+
+        /* 2. 基础重置 */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'FZShuSong', serif;
+            min-height: 100vh;
+            background-color: #f4f7f9; 
+            background-image: url('bg.jpg');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            background-attachment: fixed;
+            color: #000000;
+            overflow-x: hidden;
+        }
+
+        /* 3. 顶栏样式 */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); 
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); 
+            border-bottom-left-radius: 24px; 
+            border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); 
+            border-top: none;
+            transition: background 0.3s ease;
+        }
+        header.scrolled { background: rgba(255, 255, 255, 0.6); }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
+
+        /* 4. 内容区防遮挡 */
+        main { 
+            padding: 120px 20px 40px; 
+            max-width: 900px; 
+            margin: auto; 
+        }
+
+        /* 5. 测试提示卡片 */
+        .test-notice {
+            text-align: center; padding: 20px; margin-bottom: 25px;
+            font-family: 'FZHei', sans-serif; font-size: 15px; color: #16375D;
+            background: rgba(255, 255, 255, 0.4); border-radius: 16px;
+            border: 1px dashed rgba(22, 55, 93, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        /* 6. 玻璃卡片 —— 弹力力学 cubic‑bezier(0.175, 0.885, 0.32, 1.275) */
+        .glass-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(24px) saturate(180%); 
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); 
+            border-radius: 24px; 
+            padding: 30px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            margin-bottom: 24px;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+        }
+        .glass-card:hover { 
+            background: rgba(255, 255, 255, 0.35); 
+            transform: translateY(-5px); 
+        }
+        /* 完美回弹的按压动画 */
+        .glass-card:active { 
+            transform: scale(0.96);
+            transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 7. 智能仪表盘（卡片1）完美居中 */
+        .status-card { 
+            text-align: center; 
+            padding: 70px 30px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: auto; /* 去掉硬性高宽限制，自动适应内容 */
+        }
+        
+        #s-content-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            will-change: opacity, transform;
+            transform: translateY(0);
+        }
+        #s-content-wrapper.state-changing {
+            animation: stateFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes stateFade {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            40% { opacity: 0; transform: translateY(-8px) scale(0.98); }
+            60% { opacity: 0; transform: translateY(8px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .status-time { font-family: 'FZHei', sans-serif; font-size: 15px; color: #16375D; opacity: 0.7; margin-bottom: 5px; }
+        .status-title { font-family: 'MengyuanSong', serif; font-size: 34px; color: #16375D; margin-bottom: 10px; transition: color 0.3s; }
+        .status-teacher { font-family: 'FZShuSong', serif; font-size: 16px; color: #444; margin-bottom: 15px; min-height: 20px; }
+        
+        .status-details { display: flex; gap: 16px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap; }
+        .detail-tag { background: rgba(22, 55, 93, 0.08); padding: 6px 16px; border-radius: 20px; font-family: 'FZHei', sans-serif; font-size: 14px; color: #16375D; transition: opacity 0.3s; }
+        .progress-wrap { width: 100%; max-width: 300px; height: 5px; background: rgba(0,0,0,0.05); border-radius: 3px; margin-top: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #16375D; width: 0%; transition: width 1s linear; border-radius: 3px; }
+
+        /* 8. 课表与大时钟（卡片2）自适应撑开 + 垂直居中 */
+        .card2-wrapper { 
+            min-height: 250px; 
+            height: auto; 
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 10px 0;
+        }
+
+        .view-layer {
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+            /* 使用 max-height + Flex 彻底解决撑不开与不居中的问题 */
+            transition: opacity 0.35s ease, max-height 0.35s ease, transform 0.35s ease, padding 0.35s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-height: 0;
+            opacity: 0;
+            transform: scale(0.97);
+            pointer-events: none;
+        }
+
+        #table-view {
+            max-height: 800px;
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        #table-view.hidden {
+            max-height: 0;
+            opacity: 0;
+            transform: scale(0.97);
+            pointer-events: none;
+            padding: 0 20px;
+        }
+
+        #clock-view {
+            max-height: 0;
+            opacity: 0;
+            transform: scale(0.97);
+            pointer-events: none;
+        }
+        #clock-view.active {
+            max-height: 800px;
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .table-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 6px;
+        }
+        .table-scroll-container::-webkit-scrollbar { height: 6px; }
+        .table-scroll-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.25); border-radius: 3px; }
+        .table-scroll-container::-webkit-scrollbar-thumb { background: rgba(22, 55, 93, 0.35); border-radius: 3px; }
+        
+        /* 修复列宽：使用 colgroup 强制对齐 */
+        .schedule-table { 
+            min-width: 700px; 
+            width: 100%; 
+            table-layout: fixed;
+            border-collapse: collapse;
+            text-align: center; 
+        }
+        .schedule-table th { 
+            font-family: 'FZHei', sans-serif; 
+            color: #16375D; 
+            font-weight: normal; 
+            padding: 10px; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+        }
+        .schedule-table td { 
+            padding: 12px 8px; 
+            font-size: 15px; 
+            border-bottom: 1px solid rgba(0,0,0,0.03); 
+            transition: background 0.3s; 
+        }
+        .highlight-row td { background: rgba(22, 55, 93, 0.10) !important; }
+
+        .big-clock-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding:24px 0; }
+        .big-clock-label { font-family: 'FZHei', sans-serif; font-size: 18px; color: #16375D; opacity: 0.8; margin-bottom: 5px; }
+        .big-clock-time { font-family: 'XITS', serif; font-weight: bold; font-size: 60px; color: #16375D; letter-spacing: 2px; line-height: 1.1; font-variant-numeric: tabular-nums; text-align: center; }
+        .big-clock-sub { font-family: 'FZShuSong', serif; font-size: 18px; color: #666; margin-top: 8px; }
+
+        footer { text-align: center; padding: 30px; font-size: 14px; color: #000; backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border-radius: 24px; margin-bottom: 20px;}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">智慧课表</div>
+    </header>
+    
+    <main>
+        <div class="test-notice">
+            💡 提示：本页面数据仅供测试，后续将接入真实课表与教师安排
+        </div>
+
+        <!-- 卡片1：智能仪表盘 -->
+        <div class="glass-card status-card" id="card1">
+            <div id="s-content-wrapper">
+                <div class="status-time" id="s-time">--:--</div>
+                <div class="status-title" id="s-title">正在加载课表...</div>
+                <div class="status-teacher" id="s-teacher"></div>
+                <div class="status-details" id="s-details" style="opacity:0;">
+                    <div class="detail-tag" id="s-elapsed">已上 0分钟</div>
+                    <div class="detail-tag" id="s-remain">剩余 0分钟</div>
+                </div>
+                <div class="progress-wrap" id="s-progress-wrap" style="opacity:0;">
+                    <div class="progress-fill" id="s-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片2：普通课表与大时钟 -->
+        <div class="glass-card card2-wrapper" id="card2">
+            <div id="table-view" class="view-layer">
+                <div class="table-scroll-container">
+                    <table class="schedule-table">
+                        <colgroup>
+                            <col style="width: 90px;">
+                            <col style="width: calc((100% - 90px) / 6);">
+                            <col style="width: calc((100% - 90px) / 6);">
+                            <col style="width: calc((100% - 90px) / 6);">
+                            <col style="width: calc((100% - 90px) / 6);">
+                            <col style="width: calc((100% - 90px) / 6);">
+                            <col style="width: calc((100% - 90px) / 6);">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>星期一</th>
+                                <th>星期二</th>
+                                <th>星期三</th>
+                                <th>星期四</th>
+                                <th>星期五</th>
+                                <th>星期日</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="clock-view" class="view-layer">
+                <div class="big-clock-wrapper">
+                    <div class="big-clock-label" id="bc-label">距离下课还有</div>
+                    <div class="big-clock-time" id="bc-time">00:00</div>
+                    <div class="big-clock-sub" id="bc-sub"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>DeepSeek、千问提供技术支持 &copy; 2026 孤鸿组</footer>
+
+    <script>
+        (function() {
+            const header = document.querySelector('header');
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        header.classList.toggle('scrolled', window.scrollY > 20);
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            const normalSlots = [
+                { id:'morning', name:'早读', start:'07:40', end:'08:05' },
+                { id:'c1', name:'第一节', start:'08:10', end:'08:50' },
+                { id:'c2', name:'第二节', start:'09:00', end:'09:40' },
+                { id:'big_break', name:'大课间', start:'09:40', end:'10:10' },
+                { id:'c3', name:'第三节', start:'10:10', end:'10:50' },
+                { id:'c4', name:'第四节', start:'11:00', end:'11:40' },
+                { id:'c5', name:'第五节', start:'13:50', end:'14:30' },
+                { id:'c6', name:'第六节', start:'14:40', end:'15:20' },
+                { id:'c7', name:'第七节', start:'15:30', end:'16:10' },
+                { id:'activity', name:'第八节', start:'16:20', end:'17:00' }, 
+                { id:'dinner', name:'晚餐', start:'17:00', end:'18:00' },
+                { id:'e1', name:'晚自习(1)', start:'18:00', end:'18:40' },
+                { id:'e2', name:'晚自习(2)', start:'18:50', end:'19:30' },
+                { id:'e3', name:'晚自习(3)', start:'19:40', end:'20:20' }
+            ];
+
+            const fridaySlots = [
+                { id:'morning', name:'早读', start:'07:40', end:'08:05' },
+                { id:'c1', name:'第一节', start:'08:10', end:'08:50' },
+                { id:'c2', name:'第二节', start:'09:00', end:'09:40' },
+                { id:'big_break', name:'大课间', start:'09:40', end:'10:10' },
+                { id:'c3', name:'第三节', start:'10:10', end:'10:50' },
+                { id:'c4', name:'第四节', start:'11:00', end:'11:40' },
+                { id:'c5', name:'第五节', start:'13:00', end:'13:40' },
+                { id:'c6', name:'第六节', start:'13:50', end:'14:30' },
+                { id:'c7', name:'第七节', start:'14:40', end:'15:20' },
+                { id:'activity', name:'第八节', start:'15:30', end:'16:10' },
+                { id:'dinner', name:'晚餐', start:'17:00', end:'18:00' },
+                { id:'e1', name:'晚自习(1)', start:'18:00', end:'18:40' },
+                { id:'e2', name:'晚自习(2)', start:'18:50', end:'19:30' },
+                { id:'e3', name:'晚自习(3)', start:'19:40', end:'20:20' }
+            ];
+
+            const sundaySlots = [
+                { id:'c1', name:'第一节', start:'08:10', end:'08:50' },
+                { id:'c2', name:'第二节', start:'09:00', end:'09:40' },
+                { id:'big_break', name:'大课间', start:'09:40', end:'10:10' },
+                { id:'c3', name:'第三节', start:'10:10', end:'10:50' },
+                { id:'e1', name:'晚自习(1)', start:'18:00', end:'18:40' },
+                { id:'e2', name:'晚自习(2)', start:'18:50', end:'19:30' },
+                { id:'e3', name:'晚自习(3)', start:'19:40', end:'20:20' }
+            ];
+
+            const scheduleData = {
+                1: [ { slot:'morning', sub:'语文' }, { slot:'c1', sub:'数学' }, { slot:'c2', sub:'语文' }, { slot:'c3', sub:'化学' }, { slot:'c4', sub:'英语' }, { slot:'c5', sub:'世界历史' }, { slot:'c6', sub:'体育与健康' }, { slot:'c7', sub:'道德与法治' }, { slot:'activity', sub:'自习' }, { slot:'e1', sub:'英语' }, { slot:'e2', sub:'数学' }, { slot:'e3', sub:'语文' } ],
+                2: [ { slot:'morning', sub:'英语' }, { slot:'c1', sub:'英语' }, { slot:'c2', sub:'语文' }, { slot:'c3', sub:'数学' }, { slot:'c4', sub:'物理' }, { slot:'c5', sub:'道德与法治' }, { slot:'c6', sub:'语文' }, { slot:'c7', sub:'化学' }, { slot:'activity', sub:'自习' }, { slot:'e1', sub:'物理' }, { slot:'e2', sub:'化学' }, { slot:'e3', sub:'道德与法治' } ],
+                3: [ { slot:'morning', sub:'语文' }, { slot:'c1', sub:'数学' }, { slot:'c2', sub:'数学' }, { slot:'c3', sub:'英语' }, { slot:'c4', sub:'语文' }, { slot:'c5', sub:'道德与法治' }, { slot:'c6', sub:'物理' }, { slot:'c7', sub:'世界历史' }, { slot:'activity', sub:'自习' }, { slot:'e1', sub:'世界历史' }, { slot:'e2', sub:'语文' }, { slot:'e3', sub:'数学' } ],
+                4: [ { slot:'morning', sub:'英语' }, { slot:'c1', sub:'英语' }, { slot:'c2', sub:'英语' }, { slot:'c3', sub:'语文' }, { slot:'c4', sub:'数学' }, { slot:'c5', sub:'物理' }, { slot:'c6', sub:'世界历史' }, { slot:'c7', sub:'化学' }, { slot:'activity', sub:'自习' }, { slot:'e1', sub:'英语' }, { slot:'e2', sub:'物理' }, { slot:'e3', sub:'化学' } ],
+                5: [ { slot:'morning', sub:'语文' }, { slot:'c1', sub:'数学' }, { slot:'c2', sub:'英语' }, { slot:'c3', sub:'语文' }, { slot:'c4', sub:'语文' }, { slot:'c5', sub:'物理' }, { slot:'c6', sub:'化学' }, { slot:'c7', sub:'体育与健康' }, { slot:'activity', sub:'自习' }, { slot:'e1', sub:'道德与法治' }, { slot:'e2', sub:'世界历史' }, { slot:'e3', sub:'班会' } ],
+                0: [ { slot:'c1', sub:'数学' }, { slot:'c2', sub:'英语' }, { slot:'c3', sub:'物理' }, { slot:'e1', sub:'自习' }, { slot:'e2', sub:'自习' }, { slot:'e3', sub:'自习' } ]
+            };
+
+            const getSlotsByDay = (day) => {
+                if (day === 5) return fridaySlots;
+                if (day === 0) return sundaySlots;
+                return normalSlots;
+            };
+
+            const toMin = (t) => { const p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); };
+            const pad = (n) => String(n).padStart(2, '0');
+
+            const isSleepingTime = (curMin) => {
+                const wakeUp = 6 * 60 + 40;
+                const lightOff = 21 * 60 + 30;
+                return curMin >= lightOff || curMin < wakeUp;
+            };
+
+            const card1 = document.getElementById('card1');
+            const card2 = document.getElementById('card2');
+            const tbody = document.getElementById('schedule-tbody');
+            const contentWrapper = document.getElementById('s-content-wrapper');
+            const tableView = document.getElementById('table-view');
+            const clockView = document.getElementById('clock-view');
+
+            const els = {
+                time: document.getElementById('s-time'),
+                title: document.getElementById('s-title'),
+                teacher: document.getElementById('s-teacher'),
+                details: document.getElementById('s-details'),
+                elapsed: document.getElementById('s-elapsed'),
+                remain: document.getElementById('s-remain'),
+                progressWrap: document.getElementById('s-progress-wrap'),
+                progressFill: document.getElementById('s-fill'),
+                bcLabel: document.getElementById('bc-label'),
+                bcTime: document.getElementById('bc-time'),
+                bcSub: document.getElementById('bc-sub')
+            };
+
+            function renderTable() {
+                let html = '';
+                const daySlots = [1, 2, 3, 4, 5, 0];
+                const currentDay = new Date().getDay();
+                const allSlotIds = ['morning', 'c1', 'c2', 'big_break', 'c3', 'c4', 'c5', 'c6', 'c7', 'activity', 'dinner', 'e1', 'e2', 'e3'];
+
+                allSlotIds.forEach(sid => {
+                    let rowData = [];
+                    let hasData = false;
+                    daySlots.forEach(day => {
+                        let sub = '-';
+                        if (scheduleData[day]) {
+                            const found = scheduleData[day].find(c => c.slot === sid);
+                            if (found) { sub = found.sub; hasData = true; }
+                        }
+                        rowData.push(sub);
+                    });
+
+                    if (!hasData) return;
+                    if (currentDay === 0 && sid !== 'c1' && sid !== 'c2' && sid !== 'c3' && !sid.startsWith('e')) return;
+
+                    const slotName = (() => {
+                        const findSlots = getSlotsByDay(currentDay);
+                        const s = findSlots.find(s => s.id === sid);
+                        return s ? s.name : '';
+                    })();
+
+                    html += `<tr id="row-${sid}">
+                        <td style="font-family:'FZHei'; color:#16375D;">${slotName}</td>
+                        <td>${rowData[0]}</td>
+                        <td>${rowData[1]}</td>
+                        <td>${rowData[2]}</td>
+                        <td>${rowData[3]}</td>
+                        <td>${rowData[4]}</td>
+                        <td>${rowData[5]}</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            }
+
+            let lastStateId = '';
+            let isAnimating = false;
+
+            function applyStateUpdate(title, teacher, elapsedStr, remainStr, pct, showDetails, showProgress, stateId) {
+                if (stateId !== lastStateId && !isAnimating) {
+                    if (lastStateId !== '') {
+                        isAnimating = true;
+                        contentWrapper.classList.add('state-changing');
+
+                        setTimeout(() => {
+                            updateDOM(title, teacher, elapsedStr, remainStr, pct, showDetails, showProgress);
+                            lastStateId = stateId;
+                        }, 160);
+
+                        const onEnd = () => {
+                            isAnimating = false;
+                            contentWrapper.classList.remove('state-changing');
+                            contentWrapper.removeEventListener('animationend', onEnd);
+                        };
+                        contentWrapper.addEventListener('animationend', onEnd);
+                    } else {
+                        updateDOM(title, teacher, elapsedStr, remainStr, pct, showDetails, showProgress);
+                        lastStateId = stateId;
+                    }
+                } else if (stateId === lastStateId) {
+                    updateDOM(title, teacher, elapsedStr, remainStr, pct, showDetails, showProgress);
+                }
+            }
+
+            function updateDOM(title, teacher, elapsedStr, remainStr, pct, showDetails, showProgress) {
+                els.title.innerText = title;
+                els.teacher.innerText = teacher;
+                els.details.style.opacity = showDetails ? '1' : '0';
+                els.elapsed.innerText = elapsedStr;
+                els.remain.innerText = remainStr;
+                els.progressWrap.style.opacity = showProgress ? '1' : '0';
+                els.progressFill.style.width = pct + '%';
+            }
+
+            function updateStatus() {
+                const now = new Date();
+                const day = now.getDay();
+                const curMin = now.getHours() * 60 + now.getMinutes();
+                const slots = getSlotsByDay(day);
+
+                els.time.innerText = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+                if (isSleepingTime(curMin) || day === 6 || (day === 0 && !scheduleData[0])) {
+                    const sleepText = isSleepingTime(curMin) ? "🌙 正在睡觉" : "今日无课";
+                    applyStateUpdate(sleepText, isSleepingTime(curMin) ? "好梦，晚安" : "好好休息", '', '', 0, false, false, sleepText);
+                    return;
+                }
+
+                let found = false;
+
+                for (let i = 0; i < slots.length; i++) {
+                    const s = slots[i];
+                    const start = toMin(s.start);
+                    const end = toMin(s.end);
+                    if (curMin >= start && curMin < end) {
+                        let subject = s.name;
+                        let teacher = '';
+                        if (scheduleData[day]) {
+                            const c = scheduleData[day].find(c => c.slot === s.id);
+                            if (c) { subject = c.sub; teacher = '授课教师：' + (c.teacher || '任课老师'); }
+                        }
+
+                        const elapsed = curMin - start;
+                        const remain = end - curMin;
+                        const pct = Math.min(100, (elapsed / (end - start)) * 100);
+                        const stateId = `${day}-${s.id}-${subject}`;
+
+                        applyStateUpdate(subject, teacher, `⏳ 已上 ${elapsed} 分钟`, `⏰ 剩余 ${remain} 分钟`, pct, true, true, stateId);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    let nextSubject = '课间休息';
+                    for (let i = 0; i < slots.length; i++) {
+                        const s = slots[i];
+                        if (curMin < toMin(s.start)) {
+                            if (scheduleData[day]) {
+                                const c = scheduleData[day].find(c => c.slot === s.id);
+                                if (c) nextSubject = '下节：' + c.sub;
+                            }
+                            break;
+                        }
+                    }
+                    applyStateUpdate(nextSubject, '', '', '', 0, false, false, `break-${nextSubject}`);
+                }
+            }
+
+            let bigClockActive = false;
+            let clockRafId = null;
+
+            function formatTimeColon(totalSec) {
+                if (totalSec < 0) totalSec = 0;
+                const h = Math.floor(totalSec / 3600);
+                const m = Math.floor((totalSec % 3600) / 60);
+                const s = Math.floor(totalSec % 60);
+                return `${h}:${m}:${pad(s)}`;
+            }
+
+            function updateBigClock() {
+                if (!bigClockActive) return;
+                const now = new Date();
+                const day = now.getDay();
+                const curMin = now.getHours() * 60 + now.getMinutes();
+                const slots = getSlotsByDay(day);
+
+                if (isSleepingTime(curMin) || day === 6 || (day === 0 && !scheduleData[0])) {
+                    els.bcLabel.innerText = '🌙 休息时间';
+                    els.bcTime.innerText = '好 梦';
+                    els.bcSub.innerText = '好好休息，明天见！';
+                    clockRafId = requestAnimationFrame(updateBigClock);
+                    return;
+                }
+
+                let target = null;
+                let remainSec = 0;
+                let isClass = false;
+                const nowTotalSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+                for (let i = 0; i < slots.length; i++) {
+                    const s = slots[i];
+                    const start = toMin(s.start);
+                    const end = toMin(s.end);
+                    if (curMin >= start && curMin < end) {
+                        target = s;
+                        isClass = true;
+                        const endTotalSec = (Math.floor(end / 60) * 3600) + ((end % 60) * 60);
+                        remainSec = endTotalSec - nowTotalSec;
+                        break;
+                    }
+                }
+
+                if (isClass && target) {
+                    els.bcLabel.innerText = '距离下课还有';
+                    els.bcTime.innerText = formatTimeColon(remainSec);
+                    let sub = target.name;
+                    if (scheduleData[day]) {
+                        const c = scheduleData[day].find(c => c.slot === target.id);
+                        if (c) sub = c.sub;
+                    }
+                    els.bcSub.innerText = `当前正在上：${sub}`;
+                } else {
+                    let nextSlot = null;
+                    for (let i = 0; i < slots.length; i++) {
+                        const s = slots[i];
+                        if (curMin < toMin(s.start)) { nextSlot = s; break; }
+                    }
+                    if (nextSlot) {
+                        const startMin = toMin(nextSlot.start);
+                        const startTotalSec = (Math.floor(startMin / 60) * 3600) + ((startMin % 60) * 60);
+                        const waitSec = startTotalSec - nowTotalSec;
+                        els.bcLabel.innerText = '距离上课还有';
+                        els.bcTime.innerText = formatTimeColon(waitSec);
+                        els.bcSub.innerText = `即将上课：${nextSlot.name}`;
+                    } else {
+                        els.bcLabel.innerText = '今日课程已结束';
+                        els.bcTime.innerText = formatTimeColon(0);
+                        els.bcSub.innerText = '明天见！';
+                    }
+                }
+                clockRafId = requestAnimationFrame(updateBigClock);
+            }
+
+            let clockMode = false;
+
+            card1.addEventListener('click', function () {
+                const now = new Date();
+                const curMin = now.getHours() * 60 + now.getMinutes();
+                const day = now.getDay();
+                if (isSleepingTime(curMin) || day === 6 || (day === 0 && !scheduleData[0])) return;
+
+                clockMode = !clockMode;
+                bigClockActive = clockMode;
+
+                if (clockMode) {
+                    tableView.classList.add('hidden');
+                    clockView.classList.add('active');
+                    updateBigClock();
+                } else {
+                    clockView.classList.remove('active');
+                    tableView.classList.remove('hidden');
+                    if (clockRafId) cancelAnimationFrame(clockRafId);
+                }
+            });
+
+            renderTable();
+            updateStatus();
+
+            function scheduleNextMinuteUpdate() {
+                const now = new Date();
+                const delay = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+                setTimeout(() => {
+                    updateStatus();
+                    scheduleNextMinuteUpdate();
+                }, Math.max(0, delay));
+            }
+            scheduleNextMinuteUpdate();
+
+        })();
+    </script>
+</body>
+</html>

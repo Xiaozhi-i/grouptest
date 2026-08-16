@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孤鸿组 - 关于我们</title>
+    <style>
+        /* 字体配置保持不变 */
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZFangSong'; src: url('fonts/方正仿宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'FZFangSong', sans-serif; min-height: 100vh;
+            background-color: #f4f7f9; background-image: url('bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #000000; overflow-x: hidden;
+        }
+
+        /* 头部样式 */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
+
+        /* 核心卡片样式 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px; padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);    
+            transition: transform 0.22s ease, background 0.3s;
+            text-decoration: none; color: inherit; display: block;
+            isolation: isolate; position: relative; overflow: hidden;
+        }
+        a.glass-card:hover { background: rgba(255, 255, 255, 0.35); transform: translateY(-5px); }
+        a.glass-card:active { transform: scale(0.96); }
+        
+        .card-title { font-family: 'FZHei', sans-serif; font-size: 20px; margin-bottom: 10px; color: #16375D; display: flex; align-items: center; gap: 10px;}
+        .card-content { font-family: 'FZShuSong', serif; font-size: 16px; color: #000; line-height: 1.6; }
+
+        /* Beta 标识样式 */
+        .beta-badge {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(22, 55, 93, 0.1); color: #16375D;
+            font-family: 'FZHei', sans-serif; font-size: 12px; font-weight: bold;
+            padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(22, 55, 93, 0.2);
+            pointer-events: none; letter-spacing: 1px;
+        }
+
+        /* 底部样式 */
+        footer {
+            text-align: center; padding: 30px; margin-top: 40px;
+            font-family: 'FZShuSong', serif; font-size: 14px; color: #000;
+            backdrop-filter: blur(10px); background: rgba(255,255,255,0.2);
+        }
+        footer a { color: #16375D; text-decoration: none !important; margin: 0 5px; }
+        
+        /* 图标通用样式 */
+        .icon-svg { width: 24px; height: 24px; fill: none; stroke: #16375D; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo-area">
+            <img src="logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </a>
+        <div class="page-title">关于我们</div>
+    </header>
+
+    <main style="padding: 104px 20px 40px; max-width: 900px; margin: 0 auto;">
+        <!-- 介绍卡片区域 -->
+        <div class="glass-card" style="margin-bottom: 22px;">
+            <span class="beta-badge">BETA 测试版</span>
+            <div class="card-title">
+                <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                平台简介
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 15px;">欢迎来到孤鸿组数字化服务平台。这里是我们班级日常学习、活动组织与信息同步的核心枢纽。</p>
+                <p style="margin-bottom: 15px;">本平台旨在通过简洁、高效的方式，整合课程表、作业清单、校园活动及小组作品展示等功能，为每一位组员提供便捷的信息获取体验。</p>
+                <p><strong>当前状态：</strong>网站正处于<span style="color:#16375D; font-weight:bold;">内部测试阶段 (Beta)</span>。部分功能可能仍在迭代优化中，数据可能存在延迟或变动。如果您在浏览过程中发现任何显示异常或功能问题，欢迎随时向技术组反馈，您的建议将帮助我们更好地完善这个属于我们自己的空间。</p>
+            </div>
+        </div>
+
+        <!-- 快速导航网格 -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:22px; justify-items: stretch;">
+            <a href="index.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>返回首页</div>
+                <div class="card-content">进入主页查看实时动态与快捷入口</div>
+            </a>
+            <a href="notice.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>通知中心</div>
+                <div class="card-content">查阅班级公告、考试安排与重要提醒</div>
+            </a>
+            <a href="works.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>作品展示</div>
+                <div class="card-content">浏览孤鸿组优秀项目与创作成果</div>
+            </a>
+            <a href="teachers.html" class="glass-card">
+                <div class="card-title"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>师资团队</div>
+                <div class="card-content">了解我们的引路人与联系方式</div>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <p>友情链接：
+            <a href="chindex.html" onclick="window.top.location.href=this.href; return false;">学校官网</a> | 
+            <span onclick="window.top.location.href='yxgovedu.html';" style="cursor:pointer;color:#16375D;margin:0 5px">教育局官网</span>
+        </p>
+        <p>千问提供技术支持 &copy; 2026 孤鸿组 · 测试版</p>
+    </footer>
+</body>
+</html>

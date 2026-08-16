@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孤鸿组 - 小组作品</title>
+    <style>
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZFangSong'; src: url('fonts/方正仿宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'XITS'; src: url('fonts/XITS.otf'); font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'FZFangSong', sans-serif; min-height: 100vh;
+            background-color: #f4f7f9; background-image: url('bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #000000; overflow-x: hidden;
+        }
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
+
+        main { padding: 104px 20px 40px; max-width: 900px; margin: 0 auto; }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:22px; padding-top:26px;
+        }
+
+        /* ============================================
+           🛠️ 修复：完美复刻近期活动的力学弹力动画
+           ============================================ */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px; padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);    
+            /* ⚡ 改动：将 0.22s ease 升级为 0.4s 的弹性贝塞尔曲线 */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            text-decoration: none; color: inherit; display: flex; flex-direction: column;
+            isolation: isolate; cursor: pointer;
+        }
+        .glass-card:hover { 
+            background: rgba(255, 255, 255, 0.35); transform: translateY(-5px); 
+        }
+        .glass-card:active { 
+            transform: scale(0.96); 
+        }
+
+        .card-cover {
+            width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover;
+            border-radius: 12px; margin-bottom: 15px; background: #f0f0f0;
+            display: block;
+        }
+
+        .card-title { 
+            font-family: 'FZHei', sans-serif; font-size: 20px; margin-bottom: 6px; color: #16375D; 
+            display: flex; align-items: center; gap: 6px;
+        }
+        
+        .card-subtitle {
+            font-family: 'FZHei', sans-serif; font-size: 17px; color: #16375D; margin-bottom: 8px; opacity: 0.9;
+        }
+
+        .card-content { font-family: 'FZShuSong', serif; font-size: 15px; color: #333; line-height: 1.6; }
+
+        .group-logo-svg { width: 28px; height: 28px; flex-shrink: 0; fill: none; stroke: #16375D; stroke-width: 1.5; }
+
+        footer { text-align: center; padding: 30px; margin-top: 40px; font-family: 'FZShuSong', serif; font-size: 14px; color: #000; backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); }
+        footer a { color: #16375D; text-decoration: none; margin: 0 5px; }
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            header { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">小组作品</div>
+    </header>
+
+    <main>
+        <div class="grid-container">
+            
+            <!-- 卡片 1：专题讲解（一）一次函数 -->
+            <a href="works/1/1.html" class="glass-card">
+                <img src="works/1/1.png" alt="暑期专题讲解（一）一次函数" class="card-cover">
+                
+                <div class="card-title">
+                    <svg class="group-logo-svg" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor"/>
+                        <path d="M12 2 A10 10 0 0 1 12 22 A10 10 0 0 1 12 2" stroke="currentColor"/>
+                        <path d="M8 12 C10 8, 14 8, 16 12" stroke="currentColor" stroke-linecap="round"/>
+                        <path d="M10 14 L14 14" stroke="currentColor" stroke-linecap="round"/>
+                    </svg>
+                    【盈馨组】暑期专题讲解（一）
+                </div>
+                <div class="card-subtitle">一次函数</div>
+                <div class="card-content">数学基础精讲，带你轻松掌握一次函数的图像与性质，中考高频考点全覆盖。</div>
+            </a>
+
+            <!-- 卡片 2：专题讲解（二）初中生物学 -->
+            <a href="works/2/2.html" class="glass-card">
+                <img src="works/2/2.png" alt="暑期专题讲解（二）初中生物学" class="card-cover">
+                
+                <div class="card-title">
+                    <svg class="group-logo-svg" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor"/>
+                        <path d="M12 2 A10 10 0 0 1 12 22 A10 10 0 0 1 12 2" stroke="currentColor"/>
+                        <path d="M8 12 C10 8, 14 8, 16 12" stroke="currentColor" stroke-linecap="round"/>
+                        <path d="M10 14 L14 14" stroke="currentColor" stroke-linecap="round"/>
+                    </svg>
+                    【盈馨组】暑期专题讲解（二）
+                </div>
+                <div class="card-subtitle">初中生物学</div>
+                <div class="card-content">初中生物知识点系统归纳汇总，结合中考真题解析，帮助学生快速梳理生物重难点。</div>
+            </a>
+
+            <!-- 卡片 3：专题讲解（三）九年级物理：比热容 -->
+            <a href="works/3/3.html" class="glass-card">
+                <img src="works/3/3.png" alt="暑期专题讲解（三）九年级物理：比热容" class="card-cover">
+                
+                <div class="card-title">
+                    <svg class="group-logo-svg" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor"/>
+                        <path d="M12 2 A10 10 0 0 1 12 22 A10 10 0 0 1 12 2" stroke="currentColor"/>
+                        <path d="M8 12 C10 8, 14 8, 16 12" stroke="currentColor" stroke-linecap="round"/>
+                        <path d="M10 14 L14 14" stroke="currentColor" stroke-linecap="round"/>
+                    </svg>
+                    【盈馨组】暑期专题讲解（三）
+                </div>
+                <div class="card-subtitle">九年级物理：比热容</div>
+                <div class="card-content">深入剖析比热容概念及其热学计算公式，结合实际物理情景，为初三中考物理打下坚实基础。</div>
+            </a>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>DeepSeek提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孤鸿组 - 校历</title>
+    <style>
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZFangSong'; src: url('fonts/方正仿宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'XITS'; src: url('fonts/XITS.otf'); font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'FZFangSong', sans-serif; min-height: 100vh;
+            background-color: #f4f7f9; background-image: url('bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #000000; overflow-x: hidden;
+        }
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8);
+            transition: background 0.3s;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px; padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);
+            /* 原版作业页标准弹力曲线 */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            -webkit-transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            isolation: isolate;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-5px);
+        }
+        .glass-card:active {
+            transform: scale(0.96);
+        }
+
+        /* 表格容器：mask实现左右边缘渐进衰减（方案A镜像式渐变，无纯白硬边） */
+        .table-outer {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+        }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(22, 55, 93, 0.35);
+            border-radius: 4px;
+        }
+        /* 新增：毛玻璃模糊覆盖层 */
+        .table-blur-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none; z-index: 1; /* 盖在表格上层 */
+            backdrop-filter: blur(8px); /* 核心：毛玻璃模糊 */
+            -webkit-backdrop-filter: blur(8px);
+        /* 让模糊层只在边缘出现，中间透明 */
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 32px, #000 calc(100% - 32px), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, #000 32px, #000 calc(100% - 32px), transparent 100%);
+        }
+
+        table.calendar-table {
+            width: 100%;
+            min-width: 920px;
+            border-collapse: separate;
+            border-spacing: 6px;
+        }
+        table.calendar-table th {
+            font-family: 'FZHei', sans-serif;
+            background: rgba(22, 55, 93, 0.08);
+            color: #16375D;
+            padding: 12px 8px;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            font-weight: normal;
+            font-size: 14px;
+        }
+        table.calendar-table td {
+            font-family: 'FZShuSong', serif;
+            background: rgba(255, 255, 255, 0.45);
+            padding: 12px 8px;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            position: relative;
+            min-height: 60px;
+            font-size: 14px;
+        }
+
+        /* 月份单元格 */
+        .month-cell {
+            font-family: 'FZHei', sans-serif;
+            background: rgba(22, 55, 93, 0.12);
+            color: #16375D;
+            font-weight: normal;
+            min-width: 48px;
+        }
+
+        /* 休/班标签 */
+        .rest-tag, .work-tag {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-family: 'FZFangSong', sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .rest-tag {
+            color: #2E7D32;
+        }
+        .work-tag {
+            color: #1565C0;
+        }
+
+        /* 休息日背景 */
+        .rest-bg {
+            background: rgba(200, 235, 200, 0.55);
+        }
+        .autumn-rest-bg {
+            background: rgba(180, 220, 255, 0.55);
+        }
+        .exam-bg {
+            background: rgba(184, 212, 252, 0.6);
+        }
+
+        /* 农历文本 */
+        .lunar-text {
+            font-size: 12px;
+            display: block;
+            margin-top: 4px;
+            font-family: 'FZShuSong', serif;
+            color: #444444;
+        }
+
+        /* 备注说明 */
+        .note-wrap {
+            margin-top: 20px;
+            line-height: 1.7;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .note-title {
+            font-family: 'FZHei', sans-serif;
+            font-size: 14px;
+        }
+        .note-content {
+            font-family: 'FZShuSong', serif;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center; padding: 30px; margin-top: 40px;
+            font-family: 'FZShuSong', serif; font-size: 14px; color: #000;
+            backdrop-filter: blur(10px); background: rgba(255,255,255,0.2);
+            border-radius: 24px;
+        }
+        footer a { color: #16375D; text-decoration: none; margin: 0 5px; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">校历</div>
+    </header>
+
+    <main style="padding: 104px 20px 40px; max-width: 1100px; margin: auto;">
+        <div class="glass-card">
+            <div class="table-outer">
+                <div class="table-wrapper">
+                    <table class="calendar-table">
+                        <thead>
+                            <tr>
+                                <th>月份</th>
+                                <th>周次</th>
+                                <th>周一</th>
+                                <th>周二</th>
+                                <th>周三</th>
+                                <th>周四</th>
+                                <th>周五</th>
+                                <th>周六</th>
+                                <th>周日</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 9月 -->
+                            <tr>
+                                <td rowspan="5" class="month-cell">9月</td>
+                                <td></td>
+                                <td>31/8<br><span class="lunar-text">十九</span></td>
+                                <td>1/9<br><span class="lunar-text">二十</span></td>
+                                <td>2<br><span class="lunar-text">廿一</span></td>
+                                <td>3<br><span class="lunar-text">抗战胜利纪念日</span></td>
+                                <td>4<br><span class="lunar-text">廿三</span></td>
+                                <td class="rest-bg">5<span class="rest-tag">休</span><br><span class="lunar-text">廿四</span></td>
+                                <td class="rest-bg">6<span class="rest-tag">休</span><br><span class="lunar-text">廿五</span></td>
+                                <td>开学</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>7<br><span class="lunar-text">白露</span></td>
+                                <td>8<br><span class="lunar-text">廿七</span></td>
+                                <td>9<br><span class="lunar-text">廿八</span></td>
+                                <td>10<br><span class="lunar-text">教师节</span></td>
+                                <td>11<br><span class="lunar-text">初一</span></td>
+                                <td class="rest-bg">12<span class="rest-tag">休</span><br><span class="lunar-text">初二</span></td>
+                                <td class="rest-bg">13<span class="rest-tag">休</span><br><span class="lunar-text">初三</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>14<br><span class="lunar-text">初四</span></td>
+                                <td>15<br><span class="lunar-text">初五</span></td>
+                                <td>16<br><span class="lunar-text">初六</span></td>
+                                <td>17<br><span class="lunar-text">初七</span></td>
+                                <td>18<br><span class="lunar-text">初八</span></td>
+                                <td class="rest-bg">19<span class="rest-tag">休</span><br><span class="lunar-text">初九</span></td>
+                                <td>20<br><span class="lunar-text">初十</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>21<br><span class="lunar-text">十一</span></td>
+                                <td>22<br><span class="lunar-text">十二</span></td>
+                                <td>23<br><span class="lunar-text">秋分</span></td>
+                                <td>24<br><span class="lunar-text">十四</span></td>
+                                <td>25<br><span class="lunar-text">中秋节</span></td>
+                                <td class="rest-bg">26<span class="rest-tag">休</span><br><span class="lunar-text">十六</span></td>
+                                <td class="rest-bg">27<span class="rest-tag">休</span><br><span class="lunar-text">十七</span></td>
+                                <td>中秋节</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>28<br><span class="lunar-text">十八</span></td>
+                                <td>29<br><span class="lunar-text">十九</span></td>
+                                <td>30<br><span class="lunar-text">烈士纪念日</span></td>
+                                <td>1/10<br><span class="lunar-text">国庆节</span></td>
+                                <td>2<br><span class="lunar-text">廿二</span></td>
+                                <td class="rest-bg">3<span class="rest-tag">休</span><br><span class="lunar-text">廿三</span></td>
+                                <td class="rest-bg">4<span class="rest-tag">休</span><br><span class="lunar-text">廿四</span></td>
+                                <td>国庆节</td>
+                            </tr>
+                            <!-- 10月 -->
+                            <tr>
+                                <td rowspan="4" class="month-cell">10月</td>
+                                <td></td>
+                                <td class="rest-bg">5<span class="rest-tag">休</span><br><span class="lunar-text">廿五</span></td>
+                                <td class="rest-bg">6<span class="rest-tag">休</span><br><span class="lunar-text">廿六</span></td>
+                                <td class="rest-bg">7<span class="rest-tag">休</span><br><span class="lunar-text">廿七</span></td>
+                                <td>8<br><span class="lunar-text">寒露</span></td>
+                                <td>9<br><span class="lunar-text">廿九</span></td>
+                                <td class="rest-bg">10<span class="rest-tag">休</span><br><span class="lunar-text">初一</span></td>
+                                <td class="rest-bg">11<span class="rest-tag">休</span><br><span class="lunar-text">初二</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>12<br><span class="lunar-text">初三</span></td>
+                                <td>13<br><span class="lunar-text">初四</span></td>
+                                <td>14<br><span class="lunar-text">初五</span></td>
+                                <td>15<br><span class="lunar-text">初六</span></td>
+                                <td>16<br><span class="lunar-text">初七</span></td>
+                                <td class="rest-bg">17<span class="rest-tag">休</span><br><span class="lunar-text">初八</span></td>
+                                <td class="rest-bg">18<span class="rest-tag">休</span><br><span class="lunar-text">重阳节</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>19<br><span class="lunar-text">初十</span></td>
+                                <td>20<br><span class="lunar-text">十一</span></td>
+                                <td>21<br><span class="lunar-text">十二</span></td>
+                                <td>22<br><span class="lunar-text">十三</span></td>
+                                <td>23<br><span class="lunar-text">霜降</span></td>
+                                <td class="rest-bg">24<span class="rest-tag">休</span><br><span class="lunar-text">十五</span></td>
+                                <td class="rest-bg">25<span class="rest-tag">休</span><br><span class="lunar-text">十六</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>26<br><span class="lunar-text">十七</span></td>
+                                <td>27<br><span class="lunar-text">十八</span></td>
+                                <td>28<br><span class="lunar-text">十九</span></td>
+                                <td>29<br><span class="lunar-text">二十</span></td>
+                                <td>30<br><span class="lunar-text">廿一</span></td>
+                                <td class="rest-bg">31<span class="rest-tag">休</span><br><span class="lunar-text">廿二</span></td>
+                                <td class="rest-bg">1/11<span class="rest-tag">休</span><br><span class="lunar-text">廿三</span></td>
+                                <td></td>
+                            </tr>
+                            <!-- 11月 -->
+                            <tr>
+                                <td rowspan="4" class="month-cell">11月</td>
+                                <td></td>
+                                <td>2<br><span class="lunar-text">廿四</span></td>
+                                <td>3<br><span class="lunar-text">廿五</span></td>
+                                <td>4<br><span class="lunar-text">廿六</span></td>
+                                <td>5<br><span class="lunar-text">廿七</span></td>
+                                <td>6<br><span class="lunar-text">廿八</span></td>
+                                <td class="rest-bg">7<span class="rest-tag">休</span><br><span class="lunar-text">立冬</span></td>
+                                <td class="rest-bg">8<span class="rest-tag">休</span><br><span class="lunar-text">三十</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>9<br><span class="lunar-text">初一</span></td>
+                                <td>10<br><span class="lunar-text">初二</span></td>
+                                <td>11<br><span class="lunar-text">初三</span></td>
+                                <td class="autumn-rest-bg">12<span class="rest-tag">休</span><br><span class="lunar-text">初四</span></td>
+                                <td class="autumn-rest-bg">13<span class="rest-tag">休</span><br><span class="lunar-text">初五</span></td>
+                                <td class="autumn-rest-bg">14<span class="rest-tag">休</span><br><span class="lunar-text">初六</span></td>
+                                <td class="autumn-rest-bg">15<span class="rest-tag">休</span><br><span class="lunar-text">初七</span></td>
+                                <td>秋假</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="autumn-rest-bg">16<span class="rest-tag">休</span><br><span class="lunar-text">初八</span></td>
+                                <td>17<br><span class="lunar-text">初九</span></td>
+                                <td>18<br><span class="lunar-text">初十</span></td>
+                                <td>19<br><span class="lunar-text">十一</span></td>
+                                <td>20<br><span class="lunar-text">十二</span></td>
+                                <td class="rest-bg">21<span class="rest-tag">休</span><br><span class="lunar-text">十三</span></td>
+                                <td class="rest-bg">22<span class="rest-tag">休</span><br><span class="lunar-text">小雪</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>23<br><span class="lunar-text">十五</span></td>
+                                <td>24<br><span class="lunar-text">十六</span></td>
+                                <td>25<br><span class="lunar-text">十七</span></td>
+                                <td>26<br><span class="lunar-text">十八</span></td>
+                                <td>27<br><span class="lunar-text">十九</span></td>
+                                <td class="rest-bg">28<span class="rest-tag">休</span><br><span class="lunar-text">二十</span></td>
+                                <td class="rest-bg">29<span class="rest-tag">休</span><br><span class="lunar-text">廿一</span></td>
+                                <td></td>
+                            </tr>
+                            <!-- 12月 -->
+                            <tr>
+                                <td rowspan="5" class="month-cell">12月</td>
+                                <td></td>
+                                <td>30<br><span class="lunar-text">廿二</span></td>
+                                <td>1/12<br><span class="lunar-text">廿三</span></td>
+                                <td>2<br><span class="lunar-text">廿四</span></td>
+                                <td>3<br><span class="lunar-text">廿五</span></td>
+                                <td>4<br><span class="lunar-text">国家宪法日</span></td>
+                                <td class="rest-bg">5<span class="rest-tag">休</span><br><span class="lunar-text">廿七</span></td>
+                                <td class="rest-bg">6<span class="rest-tag">休</span><br><span class="lunar-text">廿八</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>7<br><span class="lunar-text">大雪</span></td>
+                                <td>8<br><span class="lunar-text">三十</span></td>
+                                <td>9<br><span class="lunar-text">初一</span></td>
+                                <td>10<br><span class="lunar-text">初二</span></td>
+                                <td>11<br><span class="lunar-text">初三</span></td>
+                                <td class="rest-bg">12<span class="rest-tag">休</span><br><span class="lunar-text">初四</span></td>
+                                <td class="rest-bg">13<span class="rest-tag">休</span><br><span class="lunar-text">国家公祭日</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>14<br><span class="lunar-text">初六</span></td>
+                                <td>15<br><span class="lunar-text">初七</span></td>
+                                <td>16<br><span class="lunar-text">初八</span></td>
+                                <td>17<br><span class="lunar-text">初九</span></td>
+                                <td>18<br><span class="lunar-text">初十</span></td>
+                                <td class="rest-bg">19<span class="rest-tag">休</span><br><span class="lunar-text">十一</span></td>
+                                <td class="rest-bg">20<span class="rest-tag">休</span><br><span class="lunar-text">十二</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>21<br><span class="lunar-text">十三</span></td>
+                                <td>22<br><span class="lunar-text">冬至</span></td>
+                                <td>23<br><span class="lunar-text">十五</span></td>
+                                <td>24<br><span class="lunar-text">十六</span></td>
+                                <td>25<br><span class="lunar-text">十七</span></td>
+                                <td class="rest-bg">26<span class="rest-tag">休</span><br><span class="lunar-text">十八</span></td>
+                                <td class="rest-bg">27<span class="rest-tag">休</span><br><span class="lunar-text">十九</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>28<br><span class="lunar-text">二十</span></td>
+                                <td>29<br><span class="lunar-text">廿一</span></td>
+                                <td>30<br><span class="lunar-text">廿二</span></td>
+                                <td>31<br><span class="lunar-text">廿三</span></td>
+                                <td>1/1<br><span class="lunar-text">元旦节</span></td>
+                                <td class="rest-bg">2<span class="rest-tag">休</span><br><span class="lunar-text">廿五</span></td>
+                                <td class="rest-bg">3<span class="rest-tag">休</span><br><span class="lunar-text">廿六</span></td>
+                                <td>元旦节</td>
+                            </tr>
+                            <!-- 1月 -->
+                            <tr>
+                                <td rowspan="3" class="month-cell">1月</td>
+                                <td></td>
+                                <td>4<br><span class="lunar-text">廿七</span></td>
+                                <td>5<br><span class="lunar-text">小寒</span></td>
+                                <td>6<br><span class="lunar-text">廿九</span></td>
+                                <td>7<br><span class="lunar-text">三十</span></td>
+                                <td>8<br><span class="lunar-text">初一</span></td>
+                                <td class="rest-bg">9<span class="rest-tag">休</span><br><span class="lunar-text">初二</span></td>
+                                <td class="rest-bg">10<span class="rest-tag">休</span><br><span class="lunar-text">初三</span></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="exam-bg">11<br><span class="lunar-text">初四</span></td>
+                                <td class="exam-bg">12<br><span class="lunar-text">初五</span></td>
+                                <td>13<br><span class="lunar-text">初六</span></td>
+                                <td>14<br><span class="lunar-text">初七</span></td>
+                                <td>15<br><span class="lunar-text">腊八节</span></td>
+                                <td class="rest-bg">16<span class="rest-tag">休</span><br><span class="lunar-text">初九</span></td>
+                                <td class="rest-bg">17<span class="rest-tag">休</span><br><span class="lunar-text">初十</span></td>
+                                <td>期末考试</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>18<br><span class="lunar-text">十一</span></td>
+                                <td>19<br><span class="lunar-text">十二</span></td>
+                                <td>20<br><span class="lunar-text">大寒</span></td>
+                                <td>21<br><span class="lunar-text">十四</span></td>
+                                <td>22<br><span class="lunar-text">十五</span></td>
+                                <td></td>
+                                <td></td>
+                                <td>寒假</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="note-wrap">
+                <span class="note-title">注：</span>
+                <span class="note-content">秋假与期末考试时间为预测时间，仅供参考。因秋假可与秋游、运动会、劳动周等相衔接，故其存在情况暂定。另：孤鸿组预测下学期于2027年02月21日周日开学。</span>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>豆包提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+
+    <script>
+        //页面跳转退场动画，力学曲线与主页统一 cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        document.addEventListener('click', e => {
+            const link = e.target.closest('a');
+            if (!link) return;
+            const href = link.getAttribute('href');
+            if (!href || href.startsWith('#')) return;
+            e.preventDefault();
+            const allEls = document.querySelectorAll('main > div, header, footer');
+            allEls.forEach(el=>{
+                el.style.transition = "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+                el.style.transform = "translateX(-100px)";
+                el.style.opacity = "0";
+            })
+            setTimeout(()=>{
+                window.location.href = href;
+            },400);
+        });
+    </script>
+</body>
+</html>

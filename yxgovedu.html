@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>攸县人民政府 - 攸县教育局官网</title>
+    <style>
+        @font-face { font-family: 'MengyuanSong'; src: url('fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZFangSong'; src: url('fonts/方正仿宋简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('fonts/方正书宋简体.ttf'); font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'FZFangSong', sans-serif; min-height: 100vh;
+            background-color: #f4f7f9; background-image: url('bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #000000; overflow-x: hidden;
+        }
+        
+        /* 顶部导航栏 */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 40px; width: auto; border-radius: 8px; object-fit: contain; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 26px; color: #16375D; font-weight: 400; letter-spacing: 2px; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 18px; color: #000; opacity: 0.8; }
+
+        /* 主体内容区域 */
+        main {
+            padding: 100px 20px 40px; max-width: 1200px; margin: 0 auto;
+            display: flex; flex-direction: column; align-items: center; gap: 30px;
+        }
+
+        /* 教育局官网容器 - 复用玻璃拟态风格 */
+        .school-iframe-container {
+            width: 100%;
+            /* 解决方案：设置一个固定的大高度，并允许内容滚动 */
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03);    
+            overflow-y: auto; /* 关键：启用垂直滚动条 */
+            overflow-x: hidden; /* 隐藏水平滚动条 */
+            position: relative;
+            transition: transform 0.22s ease, background 0.3s;
+        }
+        .school-iframe-container:hover { background: rgba(255, 255, 255, 0.25); }
+
+        /* iframe 样式重置 */
+        .school-iframe-container iframe {
+            width: 100%;
+            /* 解决方案：设置一个足够大的最小高度，确保内容能完整显示 */
+            min-height: 100%;
+            border: none;
+            display: block; 
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 12px 30px; font-family: 'FZHei', sans-serif; font-size: 18px;
+            color: #16375D; text-decoration: none;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        .back-btn:active {
+            transform: scale(0.98);
+        }
+        .icon-svg { width: 20px; height: 20px; margin-right: 8px; fill: none; stroke: #16375D; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        footer {
+            text-align: center; padding: 20px; margin-top: auto;
+            font-family: 'FZShuSong', serif; font-size: 14px; color: #000;
+            backdrop-filter: blur(10px); background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="yxgovedu.png" alt="攸县教育局标志">
+        </div>
+        <div class="page-title">官网</div>
+    </header>
+
+    <main>
+        <div class="school-iframe-container" id="iframeWrapper">
+            <iframe src="http://www.hnyx.gov.cn/c24529/index.html" title="攸县人民政府义务教育政务公开官网" id="schoolIframe"></iframe>
+        </div>
+
+        <a href="index.html" class="back-btn">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"></path></svg>
+            返回主页
+        </a>
+    </main>
+
+    <footer>
+        <p>千问提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+</body>
+</html>
