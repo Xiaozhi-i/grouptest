@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>孤鸿组 - 暑期专题讲解（一）一次函数</title>
+    <style>
+        /* ============================================
+           1. 严格字体导入 (已移除无用仿宋，统一使用书宋)
+           ============================================ */
+        @font-face { font-family: 'MengyuanSong'; src: url('../../fonts/梦源宋体-W27.ttc'); font-display: swap; }
+        @font-face { font-family: 'FZHei'; src: url('../../fonts/方正黑体简体.ttf'); font-display: swap; }
+        @font-face { font-family: 'FZShuSong'; src: url('../../fonts/方正书宋简体.ttf'); font-display: swap; }
+
+        /* XITS 常规体 */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS.otf'); font-weight: normal; font-style: normal; font-display: swap; }
+        /* XITS 斜体 */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS-Italic.otf'); font-weight: normal; font-style: italic; font-display: swap; }
+        /* XITS 粗体 (XITS-Bold) */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS-Bold.otf'); font-weight: bold; font-style: normal; font-display: swap; }
+        /* XITS 粗斜体 (XITS-Bold Italic) */
+        @font-face { font-family: 'XITS'; src: url('../../fonts/XITS-Bold Italic.otf'); font-weight: bold; font-style: italic; font-display: swap; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* 全局重置：默认使用方正书宋简体，不加粗、不斜体 */
+        body {
+            font-family: 'FZShuSong', serif;
+            font-weight: 400;
+            font-style: normal;
+            background-color: #f4f7f9; background-image: url('../../bg.jpg');
+            background-repeat: no-repeat; background-position: center center;
+            background-size: cover; background-attachment: fixed; color: #111; overflow-x: hidden;
+        }
+
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.3); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); border-top: none;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255,255,255,0.8); 
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-area img { height: 30px; width: 30px; border-radius: 50%; object-fit: cover; }
+        .logo-text { font-family: 'MengyuanSong', serif; font-size: 24px; color: #16375D; font-weight: 400; }
+        .page-title { font-family: 'FZHei', sans-serif; font-size: 16px; color: #000; opacity: 0.8; font-weight: 400; }
+
+        main { padding: 104px 20px 40px; max-width: 900px; margin: 0 auto; }
+
+        /* ============================================
+           ⚡ 力学弹力动画卡片
+           ============================================ */
+        .video-player-card,
+        .text-card {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        .video-player-card:active,
+        .text-card:active { transform: scale(0.96); }
+
+        /* ============================================
+           视频播放容器 (修复封面黑边问题)
+           ============================================ */
+        .video-player-card {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+        .video-wrapper {
+            width: 100%; position: relative; padding-bottom: 56.25%; /* 16:9 比例 */
+            height: 0; overflow: hidden; border-radius: 12px; background: #000;
+        }
+        .video-wrapper video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 0; outline: none;
+            object-fit: cover;
+        }
+
+        /* ============================================
+           文稿卡片样式 (精准修复字体应用)
+           ============================================ */
+        .text-card {
+            background: rgba(255, 255, 255, 0.6); border-radius: 24px;
+            padding: 40px; border: 1px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px); font-size: 18px; line-height: 2;
+        }
+
+        .text-card h1 { font-family: 'MengyuanSong', serif; font-size: 36px; text-align: center; margin-bottom: 30px; color: #16375D; font-weight: 400; font-style: normal; }
+        .text-card h2 { font-family: 'FZHei', sans-serif; font-size: 26px; margin-top: 40px; margin-bottom: 15px; color: #16375D; font-weight: 400; font-style: normal; }
+
+        /* 标准正文（仅汉字与数字 - 方正书宋简体） */
+        .txt { font-family: 'FZShuSong', serif !important; font-weight: 400 !important; font-style: normal !important; }
+        
+        /* 数学符号格式 */
+        .xits-normal { font-family: 'XITS', serif; font-weight: 400; font-style: normal; }
+        .xits-italic { font-family: 'XITS', serif; font-weight: 400; font-style: italic; }
+        
+        /* 序号与重点数学变量 (XITS-Bold) */
+        .xits-bold { font-family: 'XITS', serif; font-weight: bold; font-style: normal; }
+        
+        /* 最终答案 (XITS-Bold Italic) */
+        .xits-bold-italic { font-family: 'XITS', serif; font-weight: bold; font-style: italic; }
+
+        /* 垂直分数 (针对 XITS 垂直排版) */
+        .vf {
+            display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+            vertical-align: middle; margin: 0 3px; position: relative; top: 4px;
+            font-family: 'XITS', serif; font-weight: 400; font-style: normal;
+        }
+        .vf .num { border-bottom: 1.5px solid #222; padding: 0 6px 2px 6px; font-size: 0.85em; }
+        .vf .den { padding: 2px 6px 0 6px; font-size: 0.85em; }
+
+        /* 数学公式与专用颜色 */
+        .math-box { margin: 15px 0 20px 20px; padding: 15px 20px; background: rgba(255,255,255,0.5); border-radius: 12px; border-left: 4px solid #16375D; }
+        .math-example { font-family: 'XITS', serif; font-weight: 400; font-style: normal; font-size: 20px; color: #222; }
+        .highlight-blue { color: #1E88E5; font-family: 'XITS', serif; font-weight: bold; font-style: normal; }
+        .highlight-green { color: #388E3C; font-family: 'XITS', serif; font-weight: 400; font-style: normal; }
+        .highlight-red { color: #D32F2F; font-family: 'XITS', serif; font-weight: bold; font-style: normal; }
+
+        /* SVG 示例图形 (直线延伸至无限) */
+        .svg-graph-wrapper { width: 100%; max-width: 400px; margin: 20px auto; display: block; background: #fff; border-radius: 12px; padding: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .svg-graph-wrapper svg { width: 100%; height: auto; display: block; }
+
+        /* 点击显答案 (仅此处使用 XITS-Bold Italic) */
+        .question-block { padding: 10px 0; cursor: pointer; border-bottom: 1px dashed rgba(0,0,0,0.05); }
+        .question-block:hover { background: rgba(22, 55, 93, 0.03); }
+        .question-block .answer {
+            display: none; margin-top: 8px; padding: 8px 12px;
+            background: rgba(22, 55, 93, 0.08); border-radius: 8px;
+            font-family: 'XITS', serif; font-weight: bold; font-style: italic; color: #D32F2F; /* XITS-Bold Italic 专用 */
+        }
+        .question-block .click-hint { font-size: 14px; color: #888; opacity: 0.8; }
+
+        @media (max-width: 600px) {
+            header { padding: 15px 20px; }
+            .text-card { padding: 20px; }
+            .text-card h1 { font-size: 28px; }
+            .text-card h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="../../logo.png" alt="组徽" onerror="this.style.display='none'">
+            <span class="logo-text">孤鸿组</span>
+        </div>
+        <div class="page-title">暑期专题讲解（一）</div>
+    </header>
+
+    <main>
+        <!-- 1. 视频卡片容器 -->
+        <div class="video-player-card">
+            <div class="video-wrapper">
+                <video src="1.mp4" poster="1.png" controls playsinline></video>
+            </div>
+        </div>
+
+        <!-- 2. 讲义文稿容器 -->
+        <div class="text-card">
+
+            <h1>前言</h1>
+            <p class="txt">
+                这份一次函数讲义，没有难题、没有废话、没有听不懂的专业术语。<br>
+                我知道你们现在数学基础偏弱，公式记不住、图像看不懂、做题没有思路，很多时候不是你们学不会，是之前的知识点太碎、老师讲得太快、太难，导致你们越听越懵，越懵越不想学。<br><br>
+                但我想告诉你们：一次函数是初中数学最简单、最容易提分、最不需要天赋的章节。<br>
+                它不需要你们会复杂计算，不需要你死记一大堆公式，全程只有固定套路、固定口诀、固定做题步骤。哪怕你现在数学只有二三十分，从零开始学，也能完全听懂、学会、做对题。<br><br>
+                这份讲义专门为基础薄弱的你们量身打造，所有内容只讲考点、只讲人话、只讲能拿分的方法，去掉所有超纲内容、复杂推导。<br><br>
+                只要你耐心跟着看、跟着学，一步一步来，你们一定能拿下一次函数所有基础分，彻底摆脱“做题全蒙”的状态。
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 一、什么是一次函数                               -->
+            <!-- ============================================ -->
+            <h2>一、什么是一次函数</h2>
+            <p class="txt">
+                一次函数的标准定义是：<span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-italic">b</span>。<br>
+                我们可以把它通俗地理解成：<span class="xits-italic">y</span> 等于一个 <span class="xits-italic">带</span> <span class="xits-italic">x</span> <span class="xits-italic">的数</span> <span class="xits-normal">+</span> <span class="xits-italic">一个数字</span>。
+            </p>
+            <div class="math-box">
+                <span class="math-example"><span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-italic">b</span></span>
+            </div>
+            <p class="txt"><span class="xits-bold highlight-blue">1.</span> <span class="xits-italic">x</span> 上面不能有平方、立方（有平方就是二次函数）<br>
+               <span class="xits-bold highlight-blue">2.</span> <span class="xits-italic">x</span> 不能在分母（在分母就是反比例函数）<br>
+               <span class="xits-bold highlight-blue">3.</span> <span class="xits-italic">x</span> 不能在根号里。</p>
+
+            <div class="math-box">
+                <span class="math-example">
+                    <span class="highlight-green">✅</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">2x</span> <span class="xits-normal">+</span> <span class="xits-italic">3</span> <span class="xits-normal">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="xits-italic">一次函数</span><br>
+                    <span class="highlight-green">✅</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">x</span> <span class="xits-normal">-</span> <span class="xits-italic">1</span> <span class="xits-normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="xits-italic">一次函数</span><br>
+                    <span class="highlight-green">✅</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">5x</span> <span class="xits-normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="xits-italic">一次函数</span><span class="xits-italic">（没有后面的数也可以）</span><br>
+                    <span class="highlight-red">❌</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">x</span><span class="xits-normal"><sup>2</sup></span> <span class="xits-normal">+</span> <span class="xits-italic">2</span> <span class="xits-normal">&nbsp;&nbsp;</span><span class="xits-italic">不是</span><br>
+                    <span class="highlight-red">❌</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="vf"><span class="num">1</span><span class="den"><span class="xits-italic">x</span></span></span> <span class="xits-normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="xits-italic">不是</span>
+                </span>
+            </div>
+
+            <p class="txt">
+                <span class="xits-bold highlight-blue">1.</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">kx</span> 叫正比例函数，它是特殊的一次函数。<br>
+                <span class="xits-bold highlight-blue">2.</span> 只要 <span class="xits-italic">k</span> 不等于 <span class="xits-normal">0</span>，一定是一次函数。
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 二、整章的核心                                  -->
+            <!-- ============================================ -->
+            <h2>二、整章的核心</h2>
+            <p class="txt"><span class="xits-bold highlight-blue">①</span> <span class="xits-italic">k</span> 决定：直线是上坡还是下坡。</p>
+            <div class="math-box" style="background: rgba(255,255,255,0.7); border-left-color: #E65100;">
+                <span class="math-example">
+                    <span class="xits-italic">k</span> 正，上坡；<span class="xits-italic">k</span> 负，下坡。<br><br>
+                    <span class="xits-bold highlight-blue">★</span> <span class="xits-italic">k</span> <span class="xits-normal">&gt;</span> <span class="xits-normal">0</span>：从左往右往上爬（上坡）<br>
+                    <span class="xits-bold highlight-blue">★</span> <span class="xits-italic">k</span> <span class="xits-normal">&lt;</span> <span class="xits-normal">0</span>：从左往右往下滑（下坡）
+                </span>
+            </div>
+
+            <p class="txt"><span class="xits-bold highlight-blue">②</span> <span class="xits-italic">b</span> 决定：直线卡在 <span class="xits-italic">y</span> 轴的哪里。</p>
+            <div class="math-box" style="background: rgba(255,255,255,0.7); border-left-color: #E65100;">
+                <span class="math-example">
+                    <span class="xits-italic">b</span> <span class="xits-normal">&gt;</span> <span class="xits-normal">0</span> 交点在上方<br>
+                    <span class="xits-italic">b</span> <span class="xits-normal">=</span> <span class="xits-normal">0</span> 交点在正中间原点<br>
+                    <span class="xits-italic">b</span> <span class="xits-normal">&lt;</span> <span class="xits-normal">0</span> 交点在下方
+                </span>
+            </div>
+
+            <p class="txt" style="font-size: 22px; text-align: center; margin-top: 30px;">
+                <span class="xits-italic">k</span> <span class="txt">管倾斜，</span> <span class="xits-italic">b</span> <span class="txt">管高低。</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 三、一次函数 4 种图像 (SVG 直线延伸)           -->
+            <!-- ============================================ -->
+            <h2>三、一次函数 4 种图像</h2>
+            <p class="txt"><span class="xits-bold highlight-blue">1.</span> <span class="xits-italic">k</span> 正、<span class="xits-italic">b</span> 正 → 上坡，过 1、2、3 象限</p>
+            <div class="svg-graph-wrapper">
+                <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="40" y="10" width="320" height="300" fill="white" stroke="#ccc" stroke-width="1"/>
+                    <line x1="200" y1="10" x2="200" y2="310" stroke="#aaa" stroke-width="1"/><line x1="40" y1="160" x2="360" y2="160" stroke="#aaa" stroke-width="1"/>
+                    <text x="195" y="15" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">y</text>
+                    <text x="360" y="165" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">x</text>
+                    <text x="205" y="330" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="normal">O</text>
+                    <!-- 修复为贯穿画布的真直线 -->
+                    <line x1="-100" y1="250" x2="480" y2="-30" stroke="#1E88E5" stroke-width="3"/>
+                </svg>
+            </div>
+
+            <p class="txt"><span class="xits-bold highlight-blue">2.</span> <span class="xits-italic">k</span> 正、<span class="xits-italic">b</span> 负 → 上坡，过 1、3、4 象限</p>
+            <div class="svg-graph-wrapper">
+                <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="40" y="10" width="320" height="300" fill="white" stroke="#ccc" stroke-width="1"/>
+                    <line x1="200" y1="10" x2="200" y2="310" stroke="#aaa" stroke-width="1"/><line x1="40" y1="160" x2="360" y2="160" stroke="#aaa" stroke-width="1"/>
+                    <text x="195" y="15" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">y</text>
+                    <text x="360" y="165" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">x</text>
+                    <text x="205" y="330" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="normal">O</text>
+                    <!-- 修复为贯穿画布的真直线 -->
+                    <line x1="-100" y1="70" x2="480" y2="350" stroke="#1E88E5" stroke-width="3"/>
+                </svg>
+            </div>
+
+            <p class="txt"><span class="xits-bold highlight-blue">3.</span> <span class="xits-italic">k</span> 负、<span class="xits-italic">b</span> 正 → 下坡，过 1、2、4 象限</p>
+            <div class="svg-graph-wrapper">
+                <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="40" y="10" width="320" height="300" fill="white" stroke="#ccc" stroke-width="1"/>
+                    <line x1="200" y1="10" x2="200" y2="310" stroke="#aaa" stroke-width="1"/><line x1="40" y1="160" x2="360" y2="160" stroke="#aaa" stroke-width="1"/>
+                    <text x="195" y="15" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">y</text>
+                    <text x="360" y="165" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">x</text>
+                    <text x="205" y="330" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="normal">O</text>
+                    <!-- 修复：确保 k<0, b>0，且不过原点 -->
+                    <line x1="-100" y1="-10" x2="480" y2="290" stroke="#D32F2F" stroke-width="3"/>
+                </svg>
+            </div>
+
+            <p class="txt"><span class="xits-bold highlight-blue">4.</span> <span class="xits-italic">k</span> 负、<span class="xits-italic">b</span> 负 → 下坡，过 2、3、4 象限</p>
+            <div class="svg-graph-wrapper">
+                <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="40" y="10" width="320" height="300" fill="white" stroke="#ccc" stroke-width="1"/>
+                    <line x1="200" y1="10" x2="200" y2="310" stroke="#aaa" stroke-width="1"/><line x1="40" y1="160" x2="360" y2="160" stroke="#aaa" stroke-width="1"/>
+                    <text x="195" y="15" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">y</text>
+                    <text x="360" y="165" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="italic">x</text>
+                    <text x="205" y="330" font-family="'XITS',serif" font-size="14" fill="#666" font-weight="400" font-style="normal">O</text>
+                    <!-- 修复：确保 k<0, b<0，且不过原点 -->
+                    <line x1="-100" y1="90" x2="480" y2="390" stroke="#D32F2F" stroke-width="3"/>
+                </svg>
+            </div>
+
+            <p class="txt" style="text-align: center; font-size: 20px; margin-top: 20px;">
+                <span class="txt">做题顺序：先看上下坡定</span> <span class="xits-italic">k</span><span class="txt">，再看高低定</span> <span class="xits-italic">b</span><span class="txt">。</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 四、增减性                                      -->
+            <!-- ============================================ -->
+            <h2>四、增减性</h2>
+            <p class="txt">
+                <span class="xits-bold highlight-blue">1.</span> <span class="xits-italic">k</span> 是正数，<span class="xits-italic">x</span> 变大，<span class="xits-italic">y</span> 变大（越走越高）<br>
+                <span class="xits-bold highlight-blue">2.</span> <span class="xits-italic">k</span> 是负数，<span class="xits-italic">x</span> 变大，<span class="xits-italic">y</span> 变小（越走越低）
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 五、求交点坐标                                  -->
+            <!-- ============================================ -->
+            <h2>五、求交点坐标</h2>
+            <p class="txt">
+                <span class="xits-bold highlight-blue">①</span> 和 <span class="xits-italic">y</span> 轴的交点：<br>
+                公式：<span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-italic">b</span><br>
+                永远交于 <span class="xits-bold-italic">(0, b)</span>
+            </p>
+            <div class="math-box">
+                <span class="math-example">
+                    <span class="txt">举例：</span><span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">3x</span> <span class="xits-normal">+</span> <span class="xits-italic">4</span><br>
+                    <span class="txt">把</span> <span class="xits-italic">x</span> <span class="xits-normal">=</span> <span class="xits-normal">0</span> <span class="txt">代入</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">3x</span> <span class="xits-normal">+</span> <span class="xits-italic">4</span> <span class="txt">得：</span><br>
+                    <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">3</span> <span class="xits-normal">&times;</span> <span class="xits-normal">0</span> <span class="xits-normal">+</span> <span class="xits-italic">4</span> <span class="xits-normal">=</span> <span class="xits-italic">4</span><br>
+                    <span class="xits-bold-italic">∴ 直线 y = 3x + 4 与 y 轴交点坐标为：(0, 4)</span>
+                </span>
+            </div>
+
+            <p class="txt">
+                <span class="xits-bold highlight-blue">②</span> 和 <span class="xits-italic">x</span> 轴的交点：<br>
+                步骤永远不变：令 <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-normal">0</span>，解出 <span class="xits-italic">x</span>。
+            </p>
+            <div class="math-box">
+                <span class="math-example">
+                    <span class="txt">举例：</span><span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">2x</span> <span class="xits-normal">-</span> <span class="xits-italic">4</span><br>
+                    <span class="txt">把</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-normal">0</span> <span class="txt">代入</span> <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">2x</span> <span class="xits-normal">-</span> <span class="xits-italic">4</span> <span class="txt">得：</span><br>
+                    <span class="xits-normal">2x</span> <span class="xits-normal">-</span> <span class="xits-italic">4</span> <span class="xits-normal">=</span> <span class="xits-normal">0</span><br>
+                    <span class="xits-italic">x</span> <span class="xits-normal">=</span> <span class="xits-normal">2</span><br>
+                    <span class="xits-bold-italic">∴ 直线 y = 2x - 4 与 x 轴交点坐标为：(2, 0)</span>
+                </span>
+            </div>
+
+            <p class="txt" style="text-align: center; font-size: 22px; margin: 30px 0;">
+                <span class="txt">所有题的步骤全部一模一样。</span>
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 六、求一次函数解析式                             -->
+            <!-- ============================================ -->
+            <h2>六、求一次函数解析式</h2>
+            <p class="txt" style="text-align: center; font-size: 22px; margin-bottom: 20px;">
+                <span class="txt">题目套路永远是：</span> <span class="xits-bold-italic">给两个点，求式子</span>
+            </p>
+            
+            <p class="txt"><span class="xits-bold-italic">万能四步法（无脑套，人人会）：</span></p>
+            <div class="math-box">
+                <span class="math-example">
+                    <span class="txt">设该函数的解析式为</span> <span class="xits-bold-italic">y</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span><br>
+                    <span class="txt">把两个点代入</span> <span class="xits-bold-italic">y</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span> <span class="txt">得：</span><br>
+                    <span class="xits-bold">{</span> <span class="xits-bold-italic">kx</span><sub>1</sub> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">y</span><sub>1</sub> <span class="xits-bold"> </span><br>
+                    <span style="margin-left: 22px;"><span class="xits-bold-italic">kx</span><sub>2</sub> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">y</span><sub>2</sub></span><span class="xits-bold"> }</span><br><br>
+                    <span class="txt">解得：</span><span class="xits-bold">{</span> <span class="xits-bold-italic">k</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">a</span><span class="xits-normal">,</span> <span class="xits-bold-italic">b</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">j</span> <span class="xits-bold">}</span><br>
+                    <span class="xits-bold-italic">∴ 直线 l 的函数解析式为 y = ax + j</span>
+                </span>
+            </div>
+
+            <p class="txt" style="font-size: 20px; margin-top: 20px;">题目举例：</p>
+            <div class="math-box" style="background: rgba(255,255,255,0.7);">
+                <span class="math-example">
+                    <span class="txt">题目：直线</span> <span class="xits-italic">l</span> <span class="txt">过</span> <span class="xits-bold-italic">(0, 1)</span><span class="xits-normal">、</span><span class="xits-bold-italic">(2, 5)</span><span class="xits-normal">，</span><span class="txt">求直线</span> <span class="xits-italic">l</span> <span class="txt">的解析式（表达式）。</span><br><br>
+                    <span class="txt">设该函数的解析式为</span> <span class="xits-bold-italic">y</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span><br>
+                    <span class="txt">把</span> <span class="xits-bold-italic">(0, 1)</span> <span class="txt">和</span> <span class="xits-bold-italic">(2, 5)</span> <span class="txt">代入</span> <span class="xits-bold-italic">y</span> <span class="xits-normal">=</span> <span class="xits-bold-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span> <span class="txt">得：</span><br>
+                    <span class="xits-bold">{</span> <span class="xits-italic">k</span> <span class="xits-normal">&times;</span> <span class="xits-normal">0</span> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span> <span class="xits-normal">=</span> <span class="xits-normal">1</span><br>
+                    <span style="margin-left: 22px;"><span class="xits-italic">k</span> <span class="xits-normal">&times;</span> <span class="xits-normal">2</span> <span class="xits-normal">+</span> <span class="xits-bold-italic">b</span> <span class="xits-normal">=</span> <span class="xits-normal">5</span></span><span class="xits-bold"> }</span><br><br>
+                    <span class="txt">解得：</span><span class="xits-bold">{</span> <span class="xits-bold-italic">k</span> <span class="xits-normal">=</span> <span class="xits-normal">2</span><span class="xits-normal">,</span> <span class="xits-bold-italic">b</span> <span class="xits-normal">=</span> <span class="xits-normal">1</span> <span class="xits-bold">}</span><br>
+                    <span class="xits-bold-italic">∴ 直线 l 的函数解析式为 y = 2x + 1</span>
+                </span>
+            </div>
+
+            <p class="txt" style="text-align: center; font-size: 22px; margin: 30px 0; color: #333;">
+                “哪怕基础再差，会加减法就能拿满分。”
+            </p>
+
+            <!-- ============================================ -->
+            <!-- 七、0 基础 3 道必练题 (修复 5: 移除错误答案)  -->
+            <!-- ============================================ -->
+            <h2>七、0 基础 3 道必练题</h2>
+
+            <!-- 题目 1 -->
+            <div class="question-block" onclick="toggleAnswer(this)">
+                <p class="txt"><span class="xits-bold highlight-blue">①</span> 判断一次函数：下列是一次函数的是（  ）</p>
+                <div class="math-box" style="background: rgba(255,255,255,0.7);">
+                    <span class="math-example">
+                        A. <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">x</span><span class="xits-normal">²</span> &nbsp;&nbsp;&nbsp;&nbsp; B. <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">3x</span> <span class="xits-normal">-</span> <span class="xits-italic">2</span> &nbsp;&nbsp;&nbsp;&nbsp; C. <span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="vf"><span class="num">1</span><span class="den"><span class="xits-italic">x</span></span></span>
+                    </span>
+                </div>
+                <div class="answer">
+                    <span class="xits-bold-italic">C（直接秒杀，它不是一次函数！）</span>
+                </div>
+                <div class="click-hint txt">👆 点击题目上方区域查看答案</div>
+            </div>
+
+            <!-- 题目 2 -->
+            <div class="question-block" onclick="toggleAnswer(this)">
+                <p class="txt"><span class="xits-bold highlight-blue">②</span> 图象判断：已知一条直线 <span class="xits-italic">l</span>：<span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-italic">b</span> 呈现“下坡”、在 <span class="xits-italic">x</span> 轴下方的函数图象，求 <span class="xits-italic">k</span> 与 <span class="xits-italic">b</span> 的取值范围。</p>
+                <!-- 修复5：移除了预填的 math-box 答案 -->
+                <div class="answer">
+                    <span class="xits-bold-italic">k &lt; 0, b &lt; 0</span>
+                </div>
+                <div class="click-hint txt">👆 点击题目上方区域查看答案</div>
+            </div>
+
+            <!-- 题目 3 -->
+            <div class="question-block" onclick="toggleAnswer(this)">
+                <p class="txt"><span class="xits-bold highlight-blue">③</span> 简单大题：直线 <span class="xits-italic">l</span> 过点 <span class="xits-bold-italic">A(0, -2)</span>、点 <span class="xits-bold-italic">B(1, 1)</span>，求该直线的函数解析式。</p>
+                <!-- 修复5：移除了预填的 math-box 答案 -->
+                <div class="answer">
+                    <span class="xits-bold-italic">y = 3x - 2</span>
+                </div>
+                <div class="click-hint txt">👆 点击题目上方区域查看答案</div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 八、终极极简总结                                 -->
+            <!-- ============================================ -->
+            <h2>八、终极极简总结</h2>
+            <div class="math-box" style="background: rgba(255,255,255,0.7); border-left-color: #16375D;">
+                <span class="math-example" style="font-size: 22px; line-height: 2.2;">
+                    <span class="xits-bold highlight-blue">1.</span> 一次函数格式：<span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-italic">kx</span> <span class="xits-normal">+</span> <span class="xits-italic">b</span><br>
+                    <span class="xits-bold highlight-blue">2.</span> <span class="xits-italic">k</span> 正上坡、<span class="xits-italic">k</span> 负下坡<br>
+                    <span class="xits-bold highlight-blue">3.</span> <span class="xits-italic">b</span> 决定和 <span class="xits-italic">y</span> 轴交点高低<br>
+                    <span class="xits-bold highlight-blue">4.</span> 求交点：<span class="xits-italic">y</span> <span class="xits-normal">=</span> <span class="xits-normal">0</span> 求 <span class="xits-italic">x</span><span class="xits-normal">，</span><span class="xits-italic">x</span> <span class="xits-normal">=</span> <span class="xits-normal">0</span> 看 <span class="xits-italic">b</span><br>
+                    <span class="xits-bold highlight-blue">5.</span> 求解析式：设、代、解、写四步走
+                </span>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 结束语                                         -->
+            <!-- ============================================ -->
+            <h1 style="text-align: center; margin-top: 40px;">结束语</h1>
+            <p class="txt" style="font-size: 20px; text-align: center; line-height: 2.2;">
+                一次函数真的是初中最温柔的一章。<br>
+                没有复杂思维，全部是固定套路。<br>
+                哪怕你以前数学一直不及格、一直听不懂，<br>
+                把这一套全部吃透，基础题全部稳拿分，彻底告别蒙题！
+            </p>
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 30px; font-family: 'FZShuSong', serif; font-size: 14px; color: #000; backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border-radius: 24px; margin-top: 40px;">
+        <p>DeepSeek提供技术支持 &copy; 2026 孤鸿组</p>
+    </footer>
+
+    <script>
+        // 点击显答案逻辑
+        function toggleAnswer(element) {
+            const answerDiv = element.querySelector('.answer');
+            if (answerDiv) {
+                answerDiv.style.display = (answerDiv.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+    </script>
+</body>
+</html>
