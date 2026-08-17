@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>孤鸿组 - 暑期专题讲解（三）九年级物理：比热容</title>
     <style>
         /* ============================================
@@ -20,7 +20,7 @@
         /* XITS 粗体 (XITS-Bold) */
         @font-face { font-family: 'XITS'; src: url('../../fonts/XITS-Bold.woff2'); font-weight: bold; font-style: normal; font-display: swap; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         /* 全局重置：默认使用方正书宋简体，不加粗、不斜体 */
         body {
@@ -30,6 +30,10 @@
             background-color: #f4f7f9; background-image: url('../../bg.jpg');
             background-repeat: no-repeat; background-position: center center;
             background-size: cover; background-attachment: fixed; color: #111; overflow-x: hidden;
+        }
+
+        body.lightbox-lock {
+            overflow-y: hidden;
         }
 
         header {
@@ -105,10 +109,6 @@
         .xits-italic { font-family: 'XITS', serif; font-weight: 400; font-style: italic; }
         .xits-bold { font-family: 'XITS', serif; font-weight: bold; font-style: normal; }
 
-        /* 文案原图容器 */
-        .wenan-img-wrapper { width: 100%; max-width: 600px; margin: 30px auto; text-align: center; }
-        .wenan-img-wrapper img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-
         /* 专用颜色与辅助 */
         .highlight-blue { color: #1E88E5; }
         .highlight-red { color: #D32F2F; }
@@ -121,6 +121,125 @@
             display: inline;
         }
         .audio-trigger:hover { background: rgba(0,0,0,0.03); }
+
+        /* ============================================
+           更新：大图查看器、灯箱、玻璃按钮相关样式
+           ============================================ */
+        .album-container {
+            position: relative;
+            width: 100%; 
+            max-width: 600px;
+            margin: 30px auto; 
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .album-container:hover { transform: translateY(-5px); }
+        .album-container img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .glass-btn-wrap { position: absolute; }
+        .glass-play-btn, .close-btn {
+            position: relative; 
+            --w: 56px;
+            --h: 56px;
+            --r: 50%;
+            --glass-blur: 10px;
+            --bg-alpha: 0.22;
+            --highlight-1: 0.92;
+            --highlight-2: 0.55;
+            --inner-shadow-alpha:0.08;
+            --outer-shadow-alpha:0.18;
+            --icon-color:#000000;
+
+            border-radius: var(--r);
+            width: var(--w); 
+            height: var(--h);
+            flex-shrink: 0;
+            
+            background: rgba(255, 255, 255, var(--bg-alpha));
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+
+            border: 1px double rgba(51, 51, 51, 0.08);
+
+            box-shadow: 
+                inset 2px -2px 1px -1px rgba(255, 255, 255, var(--highlight-1)),
+                inset -2px 2px 1px -1px rgba(255, 255, 255, var(--highlight-1)),
+                inset 6px -6px 1px -6px rgba(255, 255, 255, var(--highlight-2)),
+                inset -6px 6px 1px -6px rgba(255, 255, 255, var(--highlight-2)),
+                inset 0 0 2px rgba(0, 0, 0, var(--inner-shadow-alpha)),
+                0 4px 8px rgba(0, 0, 0, var(--outer-shadow-alpha));
+
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            z-index: 10; 
+        }
+        .glass-play-btn::before, .close-btn::before {
+            content: '';
+            position: absolute;
+            z-index: 1;
+            width: calc(var(--w) - 16px);
+            height: calc(var(--h) - 16px);
+            border-radius: var(--r);
+            border:1px solid rgba(0,0,0,0.15);
+            filter: blur(4px);
+            pointer-events: none;
+            background: transparent;
+        }
+        .glass-play-btn::after, .close-btn::after {
+            content: '';
+            position: absolute;
+            z-index: 2;
+            width: calc(var(--w) - 9px);
+            height: calc(var(--h) - 9px);
+            border-radius: var(--r);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            filter: blur(1px);
+            pointer-events: none;
+            background: transparent;
+        }
+        .close-btn-wrap { top: 40px; right: 30px; z-index: 1001; }
+        .close-btn { color: var(--icon-color); font-size: 32px; font-weight: bold; line-height: 1; }
+        .close-btn span { display: inline-block; transition: transform 0.35s ease; z-index:3; position:relative; }
+        .close-btn:hover span { transform: rotate(90deg); }
+
+        /* 灯箱：仅透明度淡入淡出，无图片缩放动画 */
+        .lightbox {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
+            background: #000; 
+            z-index: 2000; /* 提高层级确保盖住header */
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 0.32s ease;
+            overflow: hidden; 
+            touch-action: none;
+        }
+        .lightbox.active { 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+        .lightbox-img-wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .lightbox-img {
+            width: 100%; height: auto; max-height: 100%; object-fit: contain;
+            transform-origin: center center; transition: none;
+            user-select: none; -webkit-user-drag: none;
+        }
 
         @media (max-width: 600px) {
             header { padding: 15px 20px; }
@@ -162,8 +281,8 @@
             </p>
 
             <!-- 图三：文案原图 -->
-            <div class="wenan-img-wrapper">
-                <img src="wenan.jpg" alt="文案原图" />
+            <div class="album-container" id="albumTrigger">
+                <img src="wenan.jpg" alt="文案原图" id="coverImg" />
             </div>
 
             <p class="txt" style="margin-top: 20px;">
@@ -189,13 +308,11 @@
 
             <h2>逐句分析：</h2>
             <p class="txt">
-                <!-- ✅ 修复：在外层包裹，括号和拼音均在点击效果内，且括号不用拼音字体 -->
                 <span class="xits-bold highlight-blue">1.</span> “<span class="audio-trigger" onclick="playAudio('3a.mp3')">怎么先炽(<span class="pinyin">chì</span>)热的却先变冷了</span>” <span class="xits-bold">✅</span> 物理正确<br>
                 对应比热容小的物质。<br>
                 吸热的时候温度上升很快，很容易变得炽热；不再加热向外放热时，温度下降也很快，会最先冷却。<br>
                 实例：沙子、铁锅。太阳一晒沙子马上滚烫，太阳落下沙子迅速降温。<br><br>
                 
-                <!-- ✅ 第二句整句触发 -->
                 <span class="xits-bold highlight-blue">2.</span> “<span class="audio-trigger" onclick="playAudio('3b.mp3')">慢热的却停不了还在沸腾着</span>”<br>
                 - “慢热” <span class="xits-bold">✅</span> 物理正确：对应比热容大的物质（如水）。升高相同温度，需要吸收更多热量，升温过程缓慢。停止加热向外放热时，温度下降十分缓慢，可以长时间保持高温。<br><br>
                 - “还在沸腾着” <span class="xits-bold highlight-red">❌</span> 不符合物理事实。<br>
@@ -211,18 +328,261 @@
         </div>
     </main>
 
+    <!-- ============================================
+         灯箱 DOM 结构
+         ============================================ -->
+    <div class="lightbox" id="lightbox">
+        <div class="glass-btn-wrap close-btn-wrap">
+            <div class="close-btn" id="closeBtn">
+                <span>×</span>
+            </div>
+        </div>
+
+        <div class="lightbox-img-wrapper" id="imgWrapper">
+            <img src="wenan.jpg" class="lightbox-img" id="fullImg">
+        </div>
+    </div>
+
     <footer style="text-align: center; padding: 30px; font-family: 'FZShuSong', serif; font-size: 14px; color: #000; backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border-radius: 24px; margin-top: 40px;">
         <p>DeepSeek提供技术支持 &copy; 2026 孤鸿组</p>
     </footer>
 
     <script>
-        // 后台静默播放音频函数（不跳转页面）
+        /* ============================================
+           1. 原有音频播放功能
+           ============================================ */
         function playAudio(src) {
             let audio = new Audio(src);
             audio.play().catch(e => {
                 console.log("音频播放失败或不允许自动播放:", e);
             });
         }
+
+        /* ============================================
+           2. 大图查看器、灯箱功能 JS 逻辑 (照搬并整合)
+           ============================================ */
+        const albumTrigger = document.getElementById('albumTrigger');
+        const lightbox = document.getElementById('lightbox');
+        const fullImg = document.getElementById('fullImg');
+        const closeBtn = document.getElementById('closeBtn');
+        const imgWrapper = document.getElementById('imgWrapper');
+
+        let scale = 1;
+        let panning = false;
+        let pointX = 0, pointY = 0, startX = 0, startY = 0;
+
+        const THROTTLE_MS = 100;
+        let lastSampleTs = 0;
+        const INTERP_DURATION = 260;
+
+        let btnState = {
+            blur: 9,
+            alpha: 0.22,
+            h1: 0.92,
+            h2: 0.55,
+            inner: 0.08,
+            outer: 0.18,
+            icon: "#ffffff"
+        };
+        let currentTargetKey = null;
+        let animFrameId = null;
+        let debounceTimer = null;
+
+        /* ---------- 打开灯箱 ---------- */
+        albumTrigger.addEventListener('click', () => {
+            document.body.classList.add('lightbox-lock');
+            lightbox.classList.add('active');
+            resetZoomSmooth();
+            updateCloseBtnStyle(true);
+        });
+
+        /* ---------- 关闭灯箱 ---------- */
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            setTimeout(()=>{
+                document.body.classList.remove('lightbox-lock');
+                resetZoomSmooth();
+            },320);
+        }
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target === imgWrapper) closeLightbox();
+        });
+        closeBtn.addEventListener('click', closeLightbox);
+
+        function resetZoomSmooth() {
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+            updateTransform();
+            setTimeout(() => {
+                updateCloseBtnStyle(true);
+            }, 320);
+        }
+
+        /* ---------- 动态玻璃按钮样式逻辑 ---------- */
+        function getInsideImgParam() {
+            return {
+                blur: 12,
+                alpha: 0.10,
+                h1: 0.42,
+                h2: 0.12,
+                inner: 0.28,
+                outer: 0.30,
+                icon: "#000000",
+                key:"inside"
+            };
+        }
+        function getOutsideImgParam() {
+            return {
+                blur: 6,
+                alpha: 0.16,
+                h1: 0.95,
+                h2: 0.62,
+                inner: 0.04,
+                outer: 0.12,
+                icon: "#ffffff",
+                key:"outside"
+            };
+        }
+
+        function syncDomFromState(btnEl) {
+            btnEl.style.setProperty('--glass-blur', btnState.blur.toFixed(1) + 'px');
+            btnEl.style.setProperty('--bg-alpha', btnState.alpha.toFixed(3));
+            btnEl.style.setProperty('--highlight-1', btnState.h1.toFixed(3));
+            btnEl.style.setProperty('--highlight-2', btnState.h2.toFixed(3));
+            btnEl.style.setProperty('--inner-shadow-alpha', btnState.inner.toFixed(3));
+            btnEl.style.setProperty('--outer-shadow-alpha', btnState.outer.toFixed(3));
+            btnEl.style.setProperty('--icon-color', btnState.icon);
+        }
+
+        function animateButton(target, btnEl) {
+            if(currentTargetKey === target.key) return;
+            if(animFrameId !== null){
+                cancelAnimationFrame(animFrameId);
+                animFrameId = null;
+                syncDomFromState(btnEl);
+            }
+            currentTargetKey = target.key;
+
+            const start = { ...btnState };
+            const startTs = performance.now();
+
+            function tick() {
+                const elapsed = performance.now() - startTs;
+                const t = Math.min(elapsed / INTERP_DURATION, 1.0);
+                const easeT = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+                btnState.blur = start.blur + (target.blur - start.blur) * easeT;
+                btnState.alpha = start.alpha + (target.alpha - start.alpha) * easeT;
+                btnState.h1 = start.h1 + (target.h1 - start.h1) * easeT;
+                btnState.h2 = start.h2 + (target.h2 - start.h2) * easeT;
+                btnState.inner = start.inner + (target.inner - start.inner) * easeT;
+                btnState.outer = start.outer + (target.outer - start.outer) * easeT;
+                btnState.icon = target.icon;
+
+                btnEl.style.setProperty('--glass-blur', btnState.blur.toFixed(1) + 'px');
+                btnEl.style.setProperty('--bg-alpha', btnState.alpha.toFixed(3));
+                btnEl.style.setProperty('--highlight-1', btnState.h1.toFixed(3));
+                btnEl.style.setProperty('--highlight-2', btnState.h2.toFixed(3));
+                btnEl.style.setProperty('--inner-shadow-alpha', btnState.inner.toFixed(3));
+                btnEl.style.setProperty('--outer-shadow-alpha', btnState.outer.toFixed(3));
+                btnEl.style.setProperty('--icon-color', btnState.icon);
+
+                if (t < 1) {
+                    animFrameId = requestAnimationFrame(tick);
+                }else{
+                    animFrameId = null;
+                }
+            }
+            tick();
+        }
+
+        function updateCloseBtnStyle(force = false) {
+            if (!lightbox.classList.contains('active')) return;
+            const now = performance.now();
+            if (!force && (now - lastSampleTs < THROTTLE_MS)) return;
+            lastSampleTs = now;
+
+            const btnRect = closeBtn.getBoundingClientRect();
+            const imgRect = fullImg.getBoundingClientRect();
+
+            const cx = btnRect.left + btnRect.width / 2;
+            const cy = btnRect.top + btnRect.height / 2;
+
+            const isInsideImg = (
+                cx >= imgRect.left &&
+                cx <= imgRect.right &&
+                cy >= imgRect.top &&
+                cy <= imgRect.bottom
+            );
+
+            if (isInsideImg) {
+                animateButton(getInsideImgParam(), closeBtn);
+            } else {
+                animateButton(getOutsideImgParam(), closeBtn);
+            }
+        }
+
+        function triggerDebounceCheck() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(()=>{
+                updateCloseBtnStyle(true);
+            }, 40);
+        }
+
+        /* ---------- 平移与缩放逻辑 ---------- */
+        function updateTransform() {
+            fullImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+            updateCloseBtnStyle();
+        }
+
+        let initialDistance = 0;
+        let initialScale = 1;
+
+        fullImg.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialScale = scale;
+                e.preventDefault();
+            } else if (e.touches.length === 1 && scale > 1) {
+                panning = true;
+                startX = e.touches[0].clientX - pointX;
+                startY = e.touches[0].clientY - pointY;
+            }
+        }, { passive: false });
+
+        fullImg.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                scale = initialScale * (currentDistance / initialDistance);
+                updateTransform();
+                e.preventDefault();
+            } else if (panning && scale > 1) {
+                pointX = e.touches[0].clientX - startX;
+                pointY = e.touches[0].clientY - startY;
+                updateTransform();
+            }
+        }, { passive: false });
+
+        fullImg.addEventListener('touchend', () => {
+            panning = false;
+            triggerDebounceCheck();
+        });
+
+        fullImg.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            scale *= delta;
+            updateTransform();
+            triggerDebounceCheck();
+        });
     </script>
 </body>
 </html>
